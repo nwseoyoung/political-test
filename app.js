@@ -5,6 +5,7 @@ function App() {
     const [currentBaseQuestion, setCurrentBaseQuestion] = useState(0);
     const [selectedDetails, setSelectedDetails] = useState({});
     const [hasSelectedNone, setHasSelectedNone] = useState(false);
+    const [allSelectedDetails, setAllSelectedDetails] = useState({});
 
     const handleStart = () => {
         setCurrentScreen('quiz');
@@ -28,8 +29,9 @@ function App() {
     };
 
     const handleNext = () => {
-        // 저장: 현재 기본 질문의 선택된 세부 항목들
-        const currentBase = baseQuestions[currentBaseQuestion];
+        // 현재 선택사항을 전체 선택사항에 저장
+        const updatedAll = { ...allSelectedDetails, ...selectedDetails };
+        setAllSelectedDetails(updatedAll);
         
         if (currentBaseQuestion < baseQuestions.length - 1) {
             setCurrentBaseQuestion(currentBaseQuestion + 1);
@@ -52,11 +54,12 @@ function App() {
         setCurrentScreen('result');
     };
 
+
     const getTotalAnsweredCount = () => {
         let count = 0;
         baseQuestions.forEach(baseQ => {
             baseQ.detailQuestions.forEach(detailQ => {
-                if (selectedDetails[detailQ.id]) {
+                if (allSelectedDetails[detailQ.id]) {
                     count++;
                 }
             });
@@ -69,7 +72,7 @@ function App() {
         baseQuestions.forEach(baseQ => {
             if (baseQ.category === category) {
                 baseQ.detailQuestions.forEach(detailQ => {
-                    if (selectedDetails[detailQ.id]) {
+                    if (allSelectedDetails[detailQ.id]) {
                         count++;
                     }
                 });
@@ -82,9 +85,9 @@ function App() {
         <div className="start-screen">
             <div className="start-content">
                 <p className="start-subtitle">나는 지금 얼마나 준비됐을까?</p>
-                <h1 className="start-title">정치인 역량 진단하기</h1>
+                <h1 className="start-title">정치인 역량 테스트</h1>
                 <p className="start-description">
-                    전현직 젊치인의 자문을 받아 구성한 셀프 진단으로 체크해 보세요.
+                    전현직 젊치인의 자문을 받아 구성한 정치인 역량 테스트로 체크해 보세요.
                     어떤 역량을 키워야 할지 스스로 목표를 세울 수 있어요.
                 </p>
                 
@@ -255,7 +258,6 @@ function App() {
         return (
             <div className="result-screen">
                 <div className="result-header">
-                    <p className="result-date">{today} 진단 결과</p>
                     <div className="personality-type" style={{marginTop: '20px', marginBottom: '30px'}}>
                         <div className="type-icon" style={{fontSize: '3rem', marginBottom: '15px'}}>{personalityType.icon}</div>
                         <h2 className="type-title" style={{fontSize: '1.8rem', fontWeight: '700', color: personalityType.color, marginBottom: '10px'}}>
@@ -292,31 +294,6 @@ function App() {
                     </div>
                 </div>
 
-                <div className="result-details">
-                    {baseQuestions.map((baseQ, idx) => {
-                        const answeredCount = baseQ.detailQuestions.filter(d => selectedDetails[d.id]).length;
-                        if (answeredCount === 0) {
-                            return (
-                                <div key={idx} className="detail-section">
-                                    <h3>{baseQ.question}</h3>
-                                    <p>해당사항 없음</p>
-                                </div>
-                            );
-                        } else {
-                            const answeredTexts = baseQ.detailQuestions
-                                .filter(d => selectedDetails[d.id])
-                                .map(d => d.text)
-                                .join(', ');
-                            return (
-                                <div key={idx} className="detail-section">
-                                    <h3>{baseQ.question}</h3>
-                                    <p>{answeredTexts}</p>
-                                </div>
-                            );
-                        }
-                    })}
-                </div>
-
                 <div className="interpretation-section">
                     <h3 className="interpretation-title">결과 해석 보러가기</h3>
                     <p className="interpretation-description">
@@ -340,6 +317,32 @@ function App() {
                             onClick={() => window.open('https://newways.kr/article/party-activity', '_blank')}
                         >
                             정당 활동 역량 해설 보기
+                        </button>
+                    </div>
+                </div>
+
+                <div className="share-section">
+                    <h3 className="share-title">결과 공유하기</h3>
+                    <div className="share-buttons">
+                        <button className="share-btn" onClick={() => {
+                            const text = `정치인 역량 테스트 결과: ${personalityType.type}\n${personalityType.message}\n\n테스트 하러가기: ${window.location.href}`;
+                            navigator.clipboard.writeText(text);
+                            alert('결과가 복사되었습니다!');
+                        }}>
+                            📋 결과 복사하기
+                        </button>
+                        <button className="share-btn" onClick={() => {
+                            const url = window.location.href;
+                            const text = `나의 정치인 역량 유형은 "${personalityType.type}"! 당신도 테스트해보세요!`;
+                            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
+                        }}>
+                            🐦 트위터 공유
+                        </button>
+                        <button className="share-btn" onClick={() => {
+                            const url = window.location.href;
+                            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
+                        }}>
+                            📘 페이스북 공유
                         </button>
                     </div>
                 </div>
