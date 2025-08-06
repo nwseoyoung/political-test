@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>정치 역량 진단 테스트 | 뉴웨이즈 메이트</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #fff;
+            background-color: #1a1a1a;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .close-btn {
+            position: absolute;
+            right: 0;
+            top: 20px;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .header p {
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+
+        .category-info {
+            opacity: 0.7;
+        }
+
+        .progress-bar {
+            background-color: #333;
+            height: 4px;
+            border-radius: 2px;
+            margin-bottom: 40px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #0d0;
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+
+        .question-card {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 20px 0;
+        }
+
+        .question-header {
+            margin-bottom: 40px;
+        }
+
+        .question-text {
+            font-size: 1.25rem;
+            color: #fff;
+            margin-bottom: 40px;
+            line-height: 1.8;
+            font-weight: 400;
+        }
+
+        .option-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .option-item {
+            background: #2a2a2a;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .option-item:hover {
+            background: #333;
+            border-color: #444;
+        }
+
+        .option-item.selected {
+            background: #333;
+            border-color: #0d0;
+        }
+
+        .option-text {
+            flex: 1;
+            line-height: 1.6;
+        }
+
+        .option-checkbox {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid #666;
+            margin-left: 20px;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .option-item.selected .option-checkbox {
+            border-color: #0d0;
+            background: #0d0;
+        }
+
+        .option-item.selected .option-checkbox::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #1a1a1a;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: auto;
+            padding: 20px 0;
+            gap: 15px;
+        }
+
+        .nav-btn {
+            flex: 1;
+            padding: 18px;
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 12px;
+            font-size: 1rem;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            background-color: #2a2a2a;
+            border-color: #444;
+        }
+
+        .nav-btn.primary {
+            background-color: #fff;
+            color: #1a1a1a;
+        }
+
+        .nav-btn.primary:hover:not(:disabled) {
+            background-color: #f0f0f0;
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .start-screen, .result-screen {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .start-content {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .start-title {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .start-description {
+            font-size: 1.1rem;
+            opacity: 0.8;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        .start-btn, .cta-btn {
+            width: 100%;
+            padding: 18px;
+            background: #fff;
+            color: #1a1a1a;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .start-btn:hover, .cta-btn:hover {
+            background-color: #f0f0f0;
+        }
+
+        .result-header {
+            margin-bottom: 30px;
+        }
+
+        .result-date {
+            font-size: 0.9rem;
+            opacity: 0.6;
+            margin-bottom: 10px;
+        }
+
+        .result-title {
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+        }
+
+        .total-score {
+            font-size: 2rem;
+            font-weight: 600;
+        }
+
+        .score-cards {
+            display: flex;
+            gap: 15px;
+            margin: 30px 0;
+        }
+
+        .score-card {
+            flex: 1;
+            background: #2a2a2a;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .score-card h3 {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            margin-bottom: 10px;
+        }
+
+        .score-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .result-details {
+            text-align: left;
+            margin: 30px 0;
+        }
+
+        .detail-section {
+            background: #2a2a2a;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .detail-section h3 {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+
+        .detail-section p {
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+
+        .strength-item {
+            padding: 10px 0;
+            border-bottom: 1px solid #333;
+        }
+
+        .strength-item:last-child {
+            border-bottom: none;
+        }
+
+        .bootcamp-section {
+            margin-top: 40px;
+            text-align: center;
+        }
+
+        .bootcamp-title {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+        }
+
+        .bootcamp-description {
+            opacity: 0.8;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .cta-section {
+            background: #2a2a2a;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .cta-title {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
+
+        .cta-description {
+            opacity: 0.8;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .score-cards {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    
+    <script>
+        const questionsData = [
+            // A. 자기 역량 (18개)
+            // 리더십
+            {
+                id: 1,
+                category: "자기 역량",
+                subcategory: "리더십",
+                question: "대표 혹은 그에 준하는 자격으로 기업 혹은 단체를 '설립'한 경험이 있고 연혁을 3개 이상 말할 수 있다.",
+                weight: 3
+            },
+            {
+                id: 2,
+                category: "자기 역량",
+                subcategory: "리더십",
+                question: "대표 혹은 그에 준하는 자격으로 10명 이상의 조직이나 공동체를 '운영'한 경험이 있다.",
+                weight: 3
+            },
+            {
+                id: 3,
+                category: "자기 역량",
+                subcategory: "리더십",
+                question: "최근 3년 내 100명 이상의 청중 앞에서 강연이나 연설을 한 경험이 있다.",
+                weight: 2
+            },
+            {
+                id: 4,
+                category: "자기 역량",
+                subcategory: "리더십",
+                question: "최근 3년 내 100명 이상의 사람들을 설득해 특정한 성과를 만든 경험이 있다.",
+                weight: 3
+            },
+            {
+                id: 5,
+                category: "자기 역량",
+                subcategory: "리더십",
+                question: "음주운전, 성범죄 등의 범죄 사실이 없고 조직이나 공동체에서 윤리적인 문제를 야기한 적이 없다.",
+                weight: 5
+            },
+            // 분야 전문성
+            {
+                id: 6,
+                category: "자기 역량",
+                subcategory: "분야 전문성",
+                question: "정치를 제외한 특정 분야에서 본업으로 한 1년 이상의 커리어 경력이나 프로젝트 경험을 가지고 있다.",
+                weight: 2
+            },
+            {
+                id: 7,
+                category: "자기 역량",
+                subcategory: "분야 전문성",
+                question: "정치를 제외한 특정 전문 분야에서 대표 혹은 그에 준하는 자격으로 수행한 프로젝트의 성공 경험이 있다.",
+                weight: 3
+            },
+            {
+                id: 8,
+                category: "자기 역량",
+                subcategory: "분야 전문성",
+                question: "정치를 제외한 특정 분야에 대한 석사 이상의 학위 졸업장을 가지고 있다.",
+                weight: 2
+            },
+            {
+                id: 9,
+                category: "자기 역량",
+                subcategory: "분야 전문성",
+                question: "정치를 제외한 특정 분야에서 전문적 지식 혹은 경험을 바탕으로 기고나 인터뷰, 강연, 출판 중 경험이 2번 이상 있다.",
+                weight: 2
+            },
+            // 이슈 전문성
+            {
+                id: 10,
+                category: "자기 역량",
+                subcategory: "이슈 전문성",
+                question: "특정한 사회 이슈 혹은 의제와 관련된 조직이나 공동체에서 활동 중이다.",
+                weight: 2
+            },
+            {
+                id: 11,
+                category: "자기 역량",
+                subcategory: "이슈 전문성",
+                question: "특정한 사회 이슈 혹은 의제와 관련된 조직이나 공동체의 대표 혹은 그에 준하는 자격으로 활동 중이다.",
+                weight: 3
+            },
+            {
+                id: 12,
+                category: "자기 역량",
+                subcategory: "이슈 전문성",
+                question: "특정한 사회 이슈 혹은 의제의 당사자로서 활동 중이다.",
+                weight: 3
+            },
+            {
+                id: 13,
+                category: "자기 역량",
+                subcategory: "이슈 전문성",
+                question: "특정한 사회 이슈 혹은 의제에 대한 구체적인 해결책과 이를 구현할 수 있는 방법에 대해 설명할 수 있다.",
+                weight: 3
+            },
+            {
+                id: 14,
+                category: "자기 역량",
+                subcategory: "이슈 전문성",
+                question: "사회 이슈에 대해 작은 성과라도 구체적인 해결책을 만든 경험이 있고 나의 기여에 대해 증명할 수 있다.",
+                weight: 3
+            },
+            {
+                id: 15,
+                category: "자기 역량",
+                subcategory: "이슈 전문성",
+                question: "시민단체, 언론 등 특정한 사회적 이슈 혹은 의제와 관련한 네트워크를 3개 이상 알고 있고 협업해본 경험이 있다.",
+                weight: 2
+            },
+            {
+                id: 16,
+                category: "자기 역량",
+                subcategory: "이슈 전문성",
+                question: "특정한 사회 이슈에 대해 기고나 인터뷰, 강연, 출판 중 경험이 2번 이상 있다.",
+                weight: 2
+            },
+            // 영향력
+            {
+                id: 17,
+                category: "자기 역량",
+                subcategory: "영향력",
+                question: "5천 명 이상의 팔로워를 보유한 소셜미디어 계정을 1개 이상 가지고 있다.",
+                weight: 2
+            },
+            {
+                id: 18,
+                category: "자기 역량",
+                subcategory: "영향력",
+                question: "라디오, TV 방송, 유튜브 채널 등에 꾸준히 패널로 출연하거나 신문 매체에서 꾸준히 칼럼을 기고하고 있다.",
+                weight: 3
+            },
+            
+            // B. 지역 활동 (19개)
+            // 지역 이해
+            {
+                id: 19,
+                category: "지역 활동",
+                subcategory: "지역 이해",
+                question: "출마 지역의 선거인 수와 성별/연령 비율, 가구 구성 등 특성에 대해 읍면동별로 설명할 수 있다.",
+                weight: 3
+            },
+            {
+                id: 20,
+                category: "지역 활동",
+                subcategory: "지역 이해",
+                question: "출마 지역의 최근 3년 내 역대 선거 결과와 특징에 대해 읍면동별로 설명할 수 있다.",
+                weight: 3
+            },
+            {
+                id: 21,
+                category: "지역 활동",
+                subcategory: "지역 이해",
+                question: "출마 지역의 주요 현안과 여론에 대해 3개 이상 구체적으로 설명할 수 있다.",
+                weight: 3
+            },
+            // 지역 의제
+            {
+                id: 22,
+                category: "지역 활동",
+                subcategory: "지역 의제",
+                question: "현재 출마 지역 내 특정한 이슈 해결과 관련된 조직이나 공동체에서 활동 중이다.",
+                weight: 2
+            },
+            {
+                id: 23,
+                category: "지역 활동",
+                subcategory: "지역 의제",
+                question: "현재 출마 지역 내 특정한 이슈 해결과 관련된 조직이나 공동체의 대표 혹은 그에 준하는 자격으로 활동 중이다.",
+                weight: 3
+            },
+            {
+                id: 24,
+                category: "지역 활동",
+                subcategory: "지역 의제",
+                question: "출마 지역 내 특정한 이슈의 당사자로서 활동 중이다.",
+                weight: 3
+            },
+            {
+                id: 25,
+                category: "지역 활동",
+                subcategory: "지역 의제",
+                question: "출마 지역 내 특정한 이슈 해결에 대한 구체적인 해결책과 실현할 수 있는 방법을 설명할 수 있다.",
+                weight: 3
+            },
+            {
+                id: 26,
+                category: "지역 활동",
+                subcategory: "지역 의제",
+                question: "지역에서 작은 성과라도 구체적인 해결책을 만든 경험이 있고 나의 기여에 대해 증명할 수 있다.",
+                weight: 3
+            },
+            {
+                id: 27,
+                category: "지역 활동",
+                subcategory: "지역 의제",
+                question: "출마 지역 내 시민단체, 언론 등 특정한 사회적 이슈 혹은 의제와 관련한 네트워크를 3개 이상 알고 있고 협업해본 경험이 있다.",
+                weight: 2
+            },
+            {
+                id: 28,
+                category: "지역 활동",
+                subcategory: "지역 의제",
+                question: "출마 지역 내 특정한 문제를 해결하는 과정에서 지역 언론에 기고나 인터뷰한 경험이 1번 이상 있다.",
+                weight: 2
+            },
+            // 지역 활동
+            {
+                id: 29,
+                category: "지역 활동",
+                subcategory: "지역 활동",
+                question: "출마 지역 내 주민자치회, 자율방법대 등 마을자치기구 또는 지역봉사단체에서 최소 월 1회, 3개월 이상 꾸준히 활동 중이다.",
+                weight: 2
+            },
+            {
+                id: 30,
+                category: "지역 활동",
+                subcategory: "지역 활동",
+                question: "출마 지역 내 아파트주민자치회, 학부모위원회 등 주요 지역 커뮤니티에서 대표 혹은 그에 준하는 자격으로 활동 중이다.",
+                weight: 3
+            },
+            {
+                id: 31,
+                category: "지역 활동",
+                subcategory: "지역 활동",
+                question: "출마 지역 내 소모임, 커뮤니티, 프로젝트에 최소 월 1회, 3개월 이상 꾸준히 활동 중이다.",
+                weight: 2
+            },
+            {
+                id: 32,
+                category: "지역 활동",
+                subcategory: "지역 활동",
+                question: "출마 지역 내 종교단체에 월 1회, 3개월 이상 꾸준히 참여하고 있다.",
+                weight: 1
+            },
+            {
+                id: 33,
+                category: "지역 활동",
+                subcategory: "지역 활동",
+                question: "출마 지역 내 교류하고 있는 직능단체, 관변단체, 시민사회단체 등이 5개 이상 있다.",
+                weight: 2
+            },
+            {
+                id: 34,
+                category: "지역 활동",
+                subcategory: "지역 활동",
+                question: "출마 지역 내 공공기관 혹은 민간기관에서 1년 이상 생업으로 일한 경험이 있다.",
+                weight: 2
+            },
+            // 지역 네트워크
+            {
+                id: 35,
+                category: "지역 활동",
+                subcategory: "지역 네트워크",
+                question: "출마 지역에 살거나, 학업 및 생업 활동을 하고 있거나, 활동을 꾸준히 출마 지역에서 하고 있다.",
+                weight: 3
+            },
+            {
+                id: 36,
+                category: "지역 활동",
+                subcategory: "지역 네트워크",
+                question: "출마 지역에 내가 졸업한 초등학교, 중학교, 고등학교, 대학교가 1개 이상 있다.",
+                weight: 2
+            },
+            {
+                id: 37,
+                category: "지역 활동",
+                subcategory: "지역 네트워크",
+                question: "나의 부모나 배우자/파트너, 자녀가 출마 지역에 살거나 학업 및 생업 혹은 활동 기반을 출마 지역에 두고 있다.",
+                weight: 2
+            },
+            
+            // C. 정당 활동 (15개)
+            // 정당 이해
+            {
+                id: 38,
+                category: "정당 활동",
+                subcategory: "정당 이해",
+                question: "당의 강령과 당헌, 당규를 모두 읽었고 당의 가치와 이념에 대해 설명할 수 있다.",
+                weight: 3
+            },
+            {
+                id: 39,
+                category: "정당 활동",
+                subcategory: "정당 이해",
+                question: "소속 정당의 주요 역사와 인물, 성과와 과오에 대해 설명할 수 있다.",
+                weight: 2
+            },
+            {
+                id: 40,
+                category: "정당 활동",
+                subcategory: "정당 이해",
+                question: "소속 정당의 조직도와 의사결정 체계를 이해하고 설명할 수 있다.",
+                weight: 2
+            },
+            {
+                id: 41,
+                category: "정당 활동",
+                subcategory: "정당 이해",
+                question: "소속 정당의 출마단위별 공천 조건과 공천권의 결정 구조에 대해 이해하고 설명할 수 있다.",
+                weight: 3
+            },
+            // 정당 현안
+            {
+                id: 42,
+                category: "정당 활동",
+                subcategory: "정당 현안",
+                question: "소속 정당이 최근 1년 이내 집중한 주요 정책을 설명할 수 있다.",
+                weight: 2
+            },
+            {
+                id: 43,
+                category: "정당 활동",
+                subcategory: "정당 현안",
+                question: "주 1회 이상 언론 기사와 당의 논평을 통해 소속 정당의 현안을 파악하고 있다.",
+                weight: 2
+            },
+            {
+                id: 44,
+                category: "정당 활동",
+                subcategory: "정당 현안",
+                question: "지역구 내 주요 현안이나 이슈에 대한 소속 정당의 입장 혹은 대안을 3개 이상 설명할 수 있다.",
+                weight: 3
+            },
+            // 정당 활동
+            {
+                id: 45,
+                category: "정당 활동",
+                subcategory: "정당 활동",
+                question: "나는 권리당원, 책임당원, 당권자 등 의결권이 있는 당원이다.",
+                weight: 3
+            },
+            {
+                id: 46,
+                category: "정당 활동",
+                subcategory: "정당 활동",
+                question: "나는 최근 공직 선거에서 특정한 역할을 임명 받아 선거 운동에 참여한 경험이 있다.",
+                weight: 2
+            },
+            {
+                id: 47,
+                category: "정당 활동",
+                subcategory: "정당 활동",
+                question: "최근 2년 이내 중앙당에서 특정 역할을 임명 받아 활동한 경험이 있고 이를 증명할 수 있다.",
+                weight: 3
+            },
+            {
+                id: 48,
+                category: "정당 활동",
+                subcategory: "정당 활동",
+                question: "최근 2년 이내 시도당에서 특정 역할을 임명 받아 활동한 경험이 있고 이를 증명할 수 있다.",
+                weight: 2
+            },
+            {
+                id: 49,
+                category: "정당 활동",
+                subcategory: "정당 활동",
+                question: "최근 2년 이내 지역위원회 특정 역할을 임명 받아 활동한 경험이 있고 이를 증명할 수 있다.",
+                weight: 2
+            },
+            // 정당 네트워크
+            {
+                id: 50,
+                category: "정당 활동",
+                subcategory: "정당 네트워크",
+                question: "중앙당, 시도당, 지역/당협위원회 내 당직자 중 의논하거나 조언을 받을 수 있는 신뢰 관계가 2명 이상 있다.",
+                weight: 2
+            },
+            {
+                id: 51,
+                category: "정당 활동",
+                subcategory: "정당 네트워크",
+                question: "지역구의 전・현직 의원들과 알고 있으며 의논하거나 조언을 받을 수 있는 신뢰 관계가 2명 이상 있다.",
+                weight: 3
+            },
+            {
+                id: 52,
+                category: "정당 활동",
+                subcategory: "정당 네트워크",
+                question: "당 내 경선 시 나를 지지할만한 당원이 50명 이상이다.",
+                weight: 3
+            }
+        ];
+
+        const { useState, useEffect } = React;
+
+        function App() {
+            const [currentScreen, setCurrentScreen] = useState('start');
+            const [currentQuestion, setCurrentQuestion] = useState(0);
+            const [answers, setAnswers] = useState({});
+            const [selectedOption, setSelectedOption] = useState(null);
+
+            const handleStart = () => {
+                setCurrentScreen('quiz');
+            };
+
+            const handleAnswer = (questionId, answer) => {
+                setAnswers({
+                    ...answers,
+                    [questionId]: answer
+                });
+                setSelectedOption(answer ? 'yes' : 'no');
+            };
+
+            const handleNext = () => {
+                if (selectedOption !== null) {
+                    if (currentQuestion < questionsData.length - 1) {
+                        setCurrentQuestion(currentQuestion + 1);
+                        setSelectedOption(answers[questionsData[currentQuestion + 1].id] !== undefined 
+                            ? (answers[questionsData[currentQuestion + 1].id] ? 'yes' : 'no') 
+                            : null);
+                    } else {
+                        calculateResults();
+                    }
+                }
+            };
+
+            const handlePrevious = () => {
+                if (currentQuestion > 0) {
+                    setCurrentQuestion(currentQuestion - 1);
+                    setSelectedOption(answers[questionsData[currentQuestion - 1].id] !== undefined 
+                        ? (answers[questionsData[currentQuestion - 1].id] ? 'yes' : 'no') 
+                        : null);
+                }
+            };
+
+            const calculateResults = () => {
+                const categoryScores = {
+                    '자기 역량': { total: 0, max: 0, count: 0 },
+                    '지역 활동': { total: 0, max: 0, count: 0 },
+                    '정당 활동': { total: 0, max: 0, count: 0 }
+                };
+
+                questionsData.forEach(question => {
+                    const category = question.category;
+                    categoryScores[category].max += question.weight;
+                    if (answers[question.id] === true) {
+                        categoryScores[category].total += question.weight;
+                        categoryScores[category].count += 1;
+                    }
+                });
+
+                setCurrentScreen('result');
+            };
+
+            const getScore = (category) => {
+                let score = 0;
+                let count = 0;
+                questionsData.forEach(question => {
+                    if (question.category === category && answers[question.id] === true) {
+                        score += question.weight;
+                        count += 1;
+                    }
+                });
+                return count;
+            };
+
+            const getTotalScore = () => {
+                let count = 0;
+                questionsData.forEach(question => {
+                    if (answers[question.id] === true) {
+                        count += 1;
+                    }
+                });
+                return count;
+            };
+
+            const renderStartScreen = () => (
+                React.createElement('div', { className: 'start-screen' },
+                    React.createElement('div', { className: 'start-content' },
+                        React.createElement('h1', { className: 'start-title' }, '정치 역량 진단 테스트'),
+                        React.createElement('p', { className: 'start-description' }, 
+                            '52개의 질문을 통해 당신의 정치 역량을 진단합니다. ' +
+                            '자기 역량, 지역 활동, 정당 활동 세 가지 영역에서 ' +
+                            '종합적인 평가를 제공합니다.'
+                        ),
+                        React.createElement('button', { 
+                            className: 'start-btn', 
+                            onClick: handleStart 
+                        }, '진단 시작하기')
+                    )
+                )
+            );
+
+            const renderQuiz = () => {
+                const question = questionsData[currentQuestion];
+                const progress = ((currentQuestion + 1) / questionsData.length) * 100;
+                
+                const categoryCount = questionsData.filter(q => q.category === question.category).length;
+                const categoryIndex = questionsData.filter((q, i) => i <= currentQuestion && q.category === question.category).length;
+
+                return React.createElement(React.Fragment, null,
+                    React.createElement('div', { className: 'progress-info' },
+                        React.createElement('span', { className: 'category-info' }, question.category),
+                        React.createElement('span', null, `${currentQuestion + 1}/${questionsData.length}`)
+                    ),
+                    React.createElement('div', { className: 'progress-bar' },
+                        React.createElement('div', { 
+                            className: 'progress-fill', 
+                            style: { width: `${progress}%` } 
+                        })
+                    ),
+                    React.createElement('div', { className: 'question-card' },
+                        React.createElement('div', { className: 'question-header' },
+                            React.createElement('h2', { className: 'question-text' }, question.question),
+                            React.createElement('p', { className: 'question-hint' }, '해당되는 항목을 모두 선택하세요')
+                        ),
+                        React.createElement('div', { className: 'option-list' },
+                            React.createElement('div', { 
+                                className: `option-item ${selectedOption === 'yes' ? 'selected' : ''}`,
+                                onClick: () => handleAnswer(question.id, true)
+                            },
+                                React.createElement('span', { className: 'option-text' }, question.question),
+                                React.createElement('div', { className: 'option-checkbox' })
+                            ),
+                            React.createElement('div', { 
+                                className: `option-item ${selectedOption === 'no' ? 'selected' : ''}`,
+                                onClick: () => handleAnswer(question.id, false)
+                            },
+                                React.createElement('span', { className: 'option-text' }, '해당항목 없음'),
+                                React.createElement('div', { className: 'option-checkbox' })
+                            )
+                        )
+                    ),
+                    React.createElement('div', { className: 'navigation' },
+                        React.createElement('button', { 
+                            className: 'nav-btn',
+                            onClick: handlePrevious,
+                            disabled: currentQuestion === 0
+                        }, '이전'),
+                        React.createElement('button', { 
+                            className: 'nav-btn primary',
+                            onClick: handleNext,
+                            disabled: selectedOption === null
+                        }, currentQuestion === questionsData.length - 1 ? '결과 보기' : '다음 질문')
+                    )
+                );
+            };
+
+            const renderResult = () => {
+                const today = new Date().toLocaleDateString('ko-KR', { 
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit'
+                }).replace(/\. /g, '.').replace('.', '');
+
+                const totalScore = getTotalScore();
+                
+                return React.createElement('div', { className: 'result-screen' },
+                    React.createElement('div', { className: 'result-header' },
+                        React.createElement('p', { className: 'result-date' }, `${today} 진단 결과`),
+                        React.createElement('h2', { className: 'result-title' }, '총 점수'),
+                        React.createElement('div', { className: 'total-score' }, `${totalScore}/52`)
+                    ),
+                    React.createElement('div', { className: 'score-cards' },
+                        React.createElement('div', { className: 'score-card' },
+                            React.createElement('h3', null, '자기 역량'),
+                            React.createElement('div', { className: 'score-value' }, `${getScore('자기 역량')}/18`)
+                        ),
+                        React.createElement('div', { className: 'score-card' },
+                            React.createElement('h3', null, '지역 활동'),
+                            React.createElement('div', { className: 'score-value' }, `${getScore('지역 활동')}/19`)
+                        ),
+                        React.createElement('div', { className: 'score-card' },
+                            React.createElement('h3', null, '정당 활동'),
+                            React.createElement('div', { className: 'score-value' }, `${getScore('정당 활동')}/15`)
+                        )
+                    ),
+                    React.createElement('div', { className: 'result-details' },
+                        getScore('자기 역량') < 6 && React.createElement('div', { className: 'detail-section' },
+                            React.createElement('h3', null, '조직이나 공동체의 리더로서 활동한 경험이 있다.'),
+                            React.createElement('p', null, '음주운전, 성범죄 등의 범죄 사실이 없고 조직이나 공동체에서 윤리적인 문제를 야기한 적이 없다.')
+                        ),
+                        getScore('지역 활동') < 7 && React.createElement('div', { className: 'detail-section' },
+                            React.createElement('h3', null, '정치를 제외한 특정 분야에서 전문 지식 혹은 경험이 있다.'),
+                            React.createElement('p', null, '정치를 제외한 특정 분야에서 본업으로 한 1년 이상의 커리어 경력이나 프로젝트 경험을 가지고 있다.')
+                        ),
+                        getScore('정당 활동') < 5 && React.createElement('div', { className: 'detail-section' },
+                            React.createElement('h3', null, '특정한 사회 이슈 혹은 의제에 관심을 가지고 해결하기 위해 활동 중이다.'),
+                            React.createElement('p', null, '사회 이슈에 대해 작은 성과라도 구체적인 해결책을 만든 경험이 있고 나의 기여에 대해 증명할 수 있다.')
+                        ),
+                        React.createElement('div', { className: 'detail-section' },
+                            React.createElement('h3', null, '나의 활동과 생각에 대해 알릴 수 있는 채널을 가지고 있다.'),
+                            React.createElement('p', null, '해당사항 없음')
+                        ),
+                        React.createElement('div', { className: 'detail-section' },
+                            React.createElement('h3', null, '출마 지역의 특성에 대해 읍면동별로 설명할 수 있다.'),
+                            React.createElement('p', null, '해당사항 없음')
+                        )
+                    ),
+                    React.createElement('div', { className: 'bootcamp-section' },
+                        React.createElement('h3', { className: 'bootcamp-title' }, '정치 역량을 높이고 싶다면?'),
+                        React.createElement('p', { className: 'bootcamp-description' }, 
+                            '뉴웨이즈 부트캠프에서 체계적인 교육과 멘토링을 통해 ' +
+                            '정치 역량을 향상시킬 수 있습니다.'
+                        ),
+                        React.createElement('button', { 
+                            className: 'cta-btn',
+                            onClick: () => window.open('https://newways.kr/bootcamp', '_blank')
+                        }, '부트캠프 자세히 보기')
+                    )
+                );
+            };
+
+            return React.createElement('div', { className: 'container' },
+                React.createElement('header', { className: 'header' },
+                    React.createElement('h1', null, '셀프 진단'),
+                    React.createElement('button', { 
+                        className: 'close-btn',
+                        onClick: () => window.close()
+                    }, '✕')
+                ),
+                currentScreen === 'start' && renderStartScreen(),
+                currentScreen === 'quiz' && renderQuiz(),
+                currentScreen === 'result' && renderResult()
+            );
+        }
+
+        ReactDOM.render(React.createElement(App), document.getElementById('root'));
+    </script>
+</body>
+</html>
