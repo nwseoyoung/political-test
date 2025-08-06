@@ -488,6 +488,26 @@ body {
     border-color: #DAE000;
 }
 
+.mate-character-intro {
+    width: 120px;
+    height: auto;
+    margin: 0 auto 20px;
+    display: block;
+    animation: bounce 2s ease-in-out infinite;
+}
+
+.mate-character-result {
+    width: 100px;
+    height: auto;
+    margin: 0 auto 20px;
+    display: block;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
 @media (max-width: 768px) {
     .container {
         padding: 15px;

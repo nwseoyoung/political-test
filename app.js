@@ -84,6 +84,7 @@ function App() {
     const renderStartScreen = () => (
         <div className="start-screen">
             <div className="start-content">
+                <img src="images/mate-character-2.png" alt="뉴웨이즈 메이트" className="mate-character-intro" />
                 <p className="start-subtitle">나는 지금 얼마나 준비됐을까?</p>
                 <h1 className="start-title">정치인 역량 테스트</h1>
                 <p className="start-description">
@@ -258,6 +259,7 @@ function App() {
         return (
             <div className="result-screen">
                 <div className="result-header">
+                    <img src="images/mate-character-1.png" alt="뉴웨이즈 메이트" className="mate-character-result" />
                     <div className="personality-type" style={{marginTop: '20px', marginBottom: '30px'}}>
                         <div className="type-icon" style={{fontSize: '3rem', marginBottom: '15px'}}>{personalityType.icon}</div>
                         <h2 className="type-title" style={{fontSize: '1.8rem', fontWeight: '700', color: personalityType.color, marginBottom: '10px'}}>
