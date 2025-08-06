@@ -2,77 +2,80 @@ const { useState, useEffect } = React;
 
 function App() {
     const [currentScreen, setCurrentScreen] = useState('start');
-    const [currentBaseQuestion, setCurrentBaseQuestion] = useState(0);
-    const [selectedDetails, setSelectedDetails] = useState({});
-    const [hasSelectedNone, setHasSelectedNone] = useState(false);
+    const [currentQuestion, setCurrentQuestion] = useState(0);
+    const [answers, setAnswers] = useState({});
+    const [selectedOption, setSelectedOption] = useState(null);
 
     const handleStart = () => {
         setCurrentScreen('quiz');
     };
 
-    const handleDetailToggle = (questionId) => {
-        if (hasSelectedNone) {
-            setHasSelectedNone(false);
-            setSelectedDetails({ [questionId]: true });
-        } else {
-            setSelectedDetails({
-                ...selectedDetails,
-                [questionId]: !selectedDetails[questionId]
-            });
-        }
-    };
-
-    const handleNoneSelected = () => {
-        setSelectedDetails({});
-        setHasSelectedNone(true);
+    const handleAnswer = (questionId, answer) => {
+        setAnswers({
+            ...answers,
+            [questionId]: answer
+        });
+        setSelectedOption(answer ? 'yes' : 'no');
     };
 
     const handleNext = () => {
-        // 저장: 현재 기본 질문의 선택된 세부 항목들
-        const currentBase = baseQuestions[currentBaseQuestion];
-        
-        if (currentBaseQuestion < baseQuestions.length - 1) {
-            setCurrentBaseQuestion(currentBaseQuestion + 1);
-            setSelectedDetails({});
-            setHasSelectedNone(false);
-        } else {
-            calculateResults();
+        if (selectedOption !== null) {
+            if (currentQuestion < questionsData.length - 1) {
+                setCurrentQuestion(currentQuestion + 1);
+                setSelectedOption(answers[questionsData[currentQuestion + 1].id] !== undefined 
+                    ? (answers[questionsData[currentQuestion + 1].id] ? 'yes' : 'no') 
+                    : null);
+            } else {
+                calculateResults();
+            }
         }
     };
 
     const handlePrevious = () => {
-        if (currentBaseQuestion > 0) {
-            setCurrentBaseQuestion(currentBaseQuestion - 1);
-            setSelectedDetails({});
-            setHasSelectedNone(false);
+        if (currentQuestion > 0) {
+            setCurrentQuestion(currentQuestion - 1);
+            setSelectedOption(answers[questionsData[currentQuestion - 1].id] !== undefined 
+                ? (answers[questionsData[currentQuestion - 1].id] ? 'yes' : 'no') 
+                : null);
         }
     };
 
     const calculateResults = () => {
+        const categoryScores = {
+            '자기 역량': { total: 0, max: 0, count: 0 },
+            '지역 활동': { total: 0, max: 0, count: 0 },
+            '정당 활동': { total: 0, max: 0, count: 0 }
+        };
+
+        questionsData.forEach(question => {
+            const category = question.category;
+            categoryScores[category].max += question.weight;
+            if (answers[question.id] === true) {
+                categoryScores[category].total += question.weight;
+                categoryScores[category].count += 1;
+            }
+        });
+
         setCurrentScreen('result');
     };
 
-    const getTotalAnsweredCount = () => {
+    const getScore = (category) => {
+        let score = 0;
         let count = 0;
-        baseQuestions.forEach(baseQ => {
-            baseQ.detailQuestions.forEach(detailQ => {
-                if (selectedDetails[detailQ.id]) {
-                    count++;
-                }
-            });
+        questionsData.forEach(question => {
+            if (question.category === category && answers[question.id] === true) {
+                score += question.weight;
+                count += 1;
+            }
         });
         return count;
     };
 
-    const getCategoryScore = (category) => {
+    const getTotalScore = () => {
         let count = 0;
-        baseQuestions.forEach(baseQ => {
-            if (baseQ.category === category) {
-                baseQ.detailQuestions.forEach(detailQ => {
-                    if (selectedDetails[detailQ.id]) {
-                        count++;
-                    }
-                });
+        questionsData.forEach(question => {
+            if (answers[question.id] === true) {
+                count += 1;
             }
         });
         return count;
@@ -87,40 +90,25 @@ function App() {
                     전현직 젊치인의 자문을 받아 구성한 셀프 진단으로 체크해 보세요.
                     어떤 역량을 키워야 할지 스스로 목표를 세울 수 있어요.
                 </p>
-                
-                <div className="competency-intro">
-                    <div className="competency-card">
-                        <h3>자기 역량</h3>
-                        <p>리더십, 전문성, 영향력 등 개인의 기본적인 정치 역량을 평가합니다.</p>
-                    </div>
-                    <div className="competency-card">
-                        <h3>지역 활동</h3>
-                        <p>지역 이해도, 네트워크, 활동 경험 등 지역 기반 역량을 측정합니다.</p>
-                    </div>
-                    <div className="competency-card">
-                        <h3>정당 활동</h3>
-                        <p>정당 이해, 활동 경험, 네트워크 등 정당 내 활동 역량을 확인합니다.</p>
-                    </div>
-                </div>
-
                 <button className="start-btn" onClick={handleStart}>
-                    진단하러 가기
+                    진단 시작하기
                 </button>
             </div>
         </div>
     );
 
     const renderQuiz = () => {
-        const baseQuestion = baseQuestions[currentBaseQuestion];
-        const progress = ((currentBaseQuestion + 1) / baseQuestions.length) * 100;
+        const question = questionsData[currentQuestion];
+        const progress = ((currentQuestion + 1) / questionsData.length) * 100;
         
-        const hasSelection = Object.keys(selectedDetails).length > 0 || hasSelectedNone;
+        const categoryCount = questionsData.filter(q => q.category === question.category).length;
+        const categoryIndex = questionsData.filter((q, i) => i <= currentQuestion && q.category === question.category).length;
 
         return (
             <>
                 <div className="progress-info">
-                    <span className="category-info">{baseQuestion.category}</span>
-                    <span>{currentBaseQuestion + 1}/12</span>
+                    <span className="category-info">{question.category}</span>
+                    <span>{currentQuestion + 1}/{questionsData.length}</span>
                 </div>
                 <div className="progress-bar">
                     <div className="progress-fill" style={{ width: `${progress}%` }}></div>
@@ -128,24 +116,21 @@ function App() {
 
                 <div className="question-card">
                     <div className="question-header">
-                        <h2 className="question-text">{baseQuestion.question}</h2>
+                        <h2 className="question-text">{question.question}</h2>
                         <p className="question-hint">해당되는 항목을 모두 선택하세요</p>
                     </div>
 
                     <div className="option-list">
-                        {baseQuestion.detailQuestions.map((detail) => (
-                            <div 
-                                key={detail.id}
-                                className={`option-item ${selectedDetails[detail.id] ? 'selected' : ''}`}
-                                onClick={() => handleDetailToggle(detail.id)}
-                            >
-                                <span className="option-text">{detail.text}</span>
-                                <div className="option-checkbox"></div>
-                            </div>
-                        ))}
                         <div 
-                            className={`option-item ${hasSelectedNone ? 'selected' : ''}`}
-                            onClick={handleNoneSelected}
+                            className={`option-item ${selectedOption === 'yes' ? 'selected' : ''}`}
+                            onClick={() => handleAnswer(question.id, true)}
+                        >
+                            <span className="option-text">{question.question}</span>
+                            <div className="option-checkbox"></div>
+                        </div>
+                        <div 
+                            className={`option-item ${selectedOption === 'no' ? 'selected' : ''}`}
+                            onClick={() => handleAnswer(question.id, false)}
                         >
                             <span className="option-text">해당항목 없음</span>
                             <div className="option-checkbox"></div>
@@ -157,16 +142,16 @@ function App() {
                     <button 
                         className="nav-btn" 
                         onClick={handlePrevious}
-                        disabled={currentBaseQuestion === 0}
+                        disabled={currentQuestion === 0}
                     >
                         이전
                     </button>
                     <button 
                         className="nav-btn primary" 
                         onClick={handleNext}
-                        disabled={!hasSelection}
+                        disabled={selectedOption === null}
                     >
-                        {currentBaseQuestion === baseQuestions.length - 1 ? '결과 보기' : '다음 질문'}
+                        {currentQuestion === questionsData.length - 1 ? '결과 보기' : '다음 질문'}
                     </button>
                 </div>
             </>
@@ -174,9 +159,9 @@ function App() {
     };
 
     const getPersonalityType = () => {
-        const selfScore = getCategoryScore('자기 역량');
-        const localScore = getCategoryScore('지역 활동');
-        const partyScore = getCategoryScore('정당 활동');
+        const selfScore = getScore('자기 역량');
+        const localScore = getScore('지역 활동');
+        const partyScore = getScore('정당 활동');
         
         const selfHigh = selfScore >= 9;
         const localHigh = localScore >= 10;
@@ -249,7 +234,7 @@ function App() {
             day: '2-digit'
         }).replace(/\. /g, '.').replace('.', '');
 
-        const totalScore = getTotalAnsweredCount();
+        const totalScore = getTotalScore();
         const personalityType = getPersonalityType();
         
         return (
@@ -269,78 +254,59 @@ function App() {
                 </div>
 
                 <div className="score-cards">
-                    <div className={`score-card ${getCategoryScore('자기 역량') >= 9 ? 'high-score' : 'low-score'}`}>
+                    <div className={`score-card ${getScore('자기 역량') >= 9 ? 'high-score' : 'low-score'}`}>
                         <h3>자기 역량</h3>
-                        <div className="score-value">{getCategoryScore('자기 역량')}/18</div>
+                        <div className="score-value">{getScore('자기 역량')}/18</div>
                         <div className="score-indicator" style={{
-                            backgroundColor: getCategoryScore('자기 역량') >= 9 ? '#DAE000' : '#666'
+                            backgroundColor: getScore('자기 역량') >= 9 ? '#DAE000' : '#666'
                         }}></div>
                     </div>
-                    <div className={`score-card ${getCategoryScore('지역 활동') >= 10 ? 'high-score' : 'low-score'}`}>
+                    <div className={`score-card ${getScore('지역 활동') >= 10 ? 'high-score' : 'low-score'}`}>
                         <h3>지역 활동</h3>
-                        <div className="score-value">{getCategoryScore('지역 활동')}/19</div>
+                        <div className="score-value">{getScore('지역 활동')}/19</div>
                         <div className="score-indicator" style={{
-                            backgroundColor: getCategoryScore('지역 활동') >= 10 ? '#DAE000' : '#666'
+                            backgroundColor: getScore('지역 활동') >= 10 ? '#DAE000' : '#666'
                         }}></div>
                     </div>
-                    <div className={`score-card ${getCategoryScore('정당 활동') >= 8 ? 'high-score' : 'low-score'}`}>
+                    <div className={`score-card ${getScore('정당 활동') >= 8 ? 'high-score' : 'low-score'}`}>
                         <h3>정당 활동</h3>
-                        <div className="score-value">{getCategoryScore('정당 활동')}/15</div>
+                        <div className="score-value">{getScore('정당 활동')}/15</div>
                         <div className="score-indicator" style={{
-                            backgroundColor: getCategoryScore('정당 활동') >= 8 ? '#DAE000' : '#666'
+                            backgroundColor: getScore('정당 활동') >= 8 ? '#DAE000' : '#666'
                         }}></div>
                     </div>
                 </div>
 
                 <div className="result-details">
-                    {baseQuestions.map((baseQ, idx) => {
-                        const answeredCount = baseQ.detailQuestions.filter(d => selectedDetails[d.id]).length;
-                        if (answeredCount === 0) {
-                            return (
-                                <div key={idx} className="detail-section">
-                                    <h3>{baseQ.question}</h3>
-                                    <p>해당사항 없음</p>
-                                </div>
-                            );
-                        } else {
-                            const answeredTexts = baseQ.detailQuestions
-                                .filter(d => selectedDetails[d.id])
-                                .map(d => d.text)
-                                .join(', ');
-                            return (
-                                <div key={idx} className="detail-section">
-                                    <h3>{baseQ.question}</h3>
-                                    <p>{answeredTexts}</p>
-                                </div>
-                            );
-                        }
-                    })}
-                </div>
+                    {getScore('자기 역량') < 6 && (
+                        <div className="detail-section">
+                            <h3>조직이나 공동체의 리더로서 활동한 경험이 있다.</h3>
+                            <p>음주운전, 성범죄 등의 범죄 사실이 없고 조직이나 공동체에서 윤리적인 문제를 야기한 적이 없다.</p>
+                        </div>
+                    )}
 
-                <div className="interpretation-section">
-                    <h3 className="interpretation-title">결과 해석 보러가기</h3>
-                    <p className="interpretation-description">
-                        각 영역별 상세한 해설과 개선 방법을 확인해보세요.
-                    </p>
-                    <div className="interpretation-links">
-                        <button 
-                            className="interpretation-btn" 
-                            onClick={() => window.open('https://newways.kr/article/self-competency', '_blank')}
-                        >
-                            자기 역량 해설 보기
-                        </button>
-                        <button 
-                            className="interpretation-btn" 
-                            onClick={() => window.open('https://newways.kr/article/local-activity', '_blank')}
-                        >
-                            지역 활동 역량 해설 보기
-                        </button>
-                        <button 
-                            className="interpretation-btn" 
-                            onClick={() => window.open('https://newways.kr/article/party-activity', '_blank')}
-                        >
-                            정당 활동 역량 해설 보기
-                        </button>
+                    {getScore('지역 활동') < 7 && (
+                        <div className="detail-section">
+                            <h3>정치를 제외한 특정 분야에서 전문 지식 혹은 경험이 있다.</h3>
+                            <p>정치를 제외한 특정 분야에서 본업으로 한 1년 이상의 커리어 경력이나 프로젝트 경험을 가지고 있다.</p>
+                        </div>
+                    )}
+
+                    {getScore('정당 활동') < 5 && (
+                        <div className="detail-section">
+                            <h3>특정한 사회 이슈 혹은 의제에 관심을 가지고 해결하기 위해 활동 중이다.</h3>
+                            <p>사회 이슈에 대해 작은 성과라도 구체적인 해결책을 만든 경험이 있고 나의 기여에 대해 증명할 수 있다.</p>
+                        </div>
+                    )}
+
+                    <div className="detail-section">
+                        <h3>나의 활동과 생각에 대해 알릴 수 있는 채널을 가지고 있다.</h3>
+                        <p>해당사항 없음</p>
+                    </div>
+
+                    <div className="detail-section">
+                        <h3>출마 지역의 특성에 대해 읍면동별로 설명할 수 있다.</h3>
+                        <p>해당사항 없음</p>
                     </div>
                 </div>
 
