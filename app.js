@@ -173,21 +173,22 @@ function App() {
         const hasSelection = Object.keys(selectedDetails).length > 0 || hasSelectedNone;
 
         return (
-            <>
-                <div className="progress-info">
-                    <span className="category-info">{baseQuestion.category}</span>
-                    <span>{currentBaseQuestion + 1}/12</span>
-                </div>
-                <div className="progress-bar">
-                    <div className="progress-fill" style={{ width: `${progress}%` }}></div>
-                </div>
-
-                <div className="question-card">
+            <div className="quiz-container">
+                <div className="quiz-header-fixed">
+                    <div className="progress-info">
+                        <span className="category-info">{baseQuestion.category}</span>
+                        <span>{currentBaseQuestion + 1}/12</span>
+                    </div>
+                    <div className="progress-bar">
+                        <div className="progress-fill" style={{ width: `${progress}%` }}></div>
+                    </div>
                     <div className="question-header">
                         <h2 className="question-text">{baseQuestion.question}</h2>
                         <p className="question-hint">해당되는 항목을 모두 선택하세요</p>
                     </div>
+                </div>
 
+                <div className="quiz-content">
                     <div className="option-list">
                         {baseQuestion.detailQuestions.map((detail) => (
                             <div 
@@ -225,7 +226,7 @@ function App() {
                         {currentBaseQuestion === baseQuestions.length - 1 ? '결과 보기' : '다음 질문'}
                     </button>
                 </div>
-            </>
+            </div>
         );
     };
 
@@ -447,10 +448,6 @@ function App() {
 
     return (
         <div className="container">
-            <header className="header">
-                <button className="close-btn" onClick={() => window.close()}>✕</button>
-            </header>
-            
             {currentScreen === 'start' && renderStartScreen()}
             {currentScreen === 'quiz' && renderQuiz()}
             {currentScreen === 'result' && renderResult()}

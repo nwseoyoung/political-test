@@ -114,40 +114,6 @@ body::after {
     z-index: 1;
 }
 
-.header {
-    text-align: center;
-    padding: 20px 0;
-    position: relative;
-}
-
-.header h1 {
-    font-size: 1.5rem;
-    font-weight: 500;
-    margin-bottom: 5px;
-    color: #1a1a1a;
-}
-
-.close-btn {
-    position: absolute;
-    right: 0;
-    top: 20px;
-    background: none;
-    border: none;
-    color: #666;
-    font-size: 1.5rem;
-    cursor: pointer;
-    padding: 5px;
-    transition: color 0.2s ease;
-}
-
-.close-btn:hover {
-    color: #1a1a1a;
-}
-
-.header p {
-    font-size: 0.9rem;
-    opacity: 0.7;
-}
 
 .progress-info {
     display: flex;
@@ -178,25 +144,48 @@ body::after {
     transition: width 0.3s ease;
 }
 
-.question-card {
-    flex: 1;
+.quiz-container {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    padding: 20px 0;
+    min-height: 100vh;
+    position: relative;
+}
+
+.quiz-header-fixed {
+    position: sticky;
+    top: 0;
+    background: white;
+    border-radius: 20px 20px 0 0;
+    padding: 30px 30px 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    z-index: 100;
+    margin-bottom: 20px;
+}
+
+.quiz-content {
+    flex: 1;
+    padding: 0 20px;
+    overflow-y: auto;
+    padding-bottom: 120px;
 }
 
 .question-header {
-    margin-bottom: 40px;
+    margin-top: 20px;
 }
 
 .question-text {
     font-family: 'HGGGothicssi', 'Pretendard', sans-serif;
     font-size: 1.25rem;
     color: #1a1a1a;
-    margin-bottom: 40px;
+    margin-bottom: 10px;
     line-height: 1.8;
     font-weight: 400;
+}
+
+.question-hint {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 0;
 }
 
 .option-list {
@@ -264,11 +253,19 @@ body::after {
 }
 
 .navigation {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 600px;
     display: flex;
     justify-content: space-between;
-    margin-top: auto;
-    padding: 20px 0;
+    padding: 20px;
     gap: 15px;
+    background: linear-gradient(to top, rgba(245,247,250,1) 0%, rgba(245,247,250,0.95) 80%, transparent 100%);
+    backdrop-filter: blur(10px);
+    z-index: 100;
 }
 
 .nav-btn {
