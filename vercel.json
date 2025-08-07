@@ -1,16 +1,10 @@
 {
   "name": "political-test",
   "version": 2,
-  "builds": [
+  "rewrites": [
     {
-      "src": "index-complete.html",
-      "use": "@vercel/static"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/index-complete.html"
+      "source": "/",
+      "destination": "/index.html"
     }
   ]
 }

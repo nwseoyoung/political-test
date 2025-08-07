@@ -6,6 +6,13 @@ function App() {
     const [selectedDetails, setSelectedDetails] = useState({});
     const [hasSelectedNone, setHasSelectedNone] = useState(false);
     const [allSelectedDetails, setAllSelectedDetails] = useState({});
+    const [showInfoModal, setShowInfoModal] = useState(false);
+    const [userInfo, setUserInfo] = useState({
+        name: '',
+        phone: '',
+        email: ''
+    });
+    const [targetArticle, setTargetArticle] = useState('');
 
     const handleStart = () => {
         setCurrentScreen('quiz');
@@ -52,6 +59,51 @@ function App() {
 
     const calculateResults = () => {
         setCurrentScreen('result');
+        // 결과를 localStorage에 저장
+        const resultData = {
+            date: new Date().toISOString(),
+            allSelectedDetails,
+            totalScore: getTotalAnsweredCount(),
+            selfScore: getCategoryScore('자기 역량'),
+            localScore: getCategoryScore('지역 활동'),
+            partyScore: getCategoryScore('정당 활동')
+        };
+        localStorage.setItem('politicalTestResult', JSON.stringify(resultData));
+    };
+
+    const handleInterpretationClick = (articleUrl) => {
+        setTargetArticle(articleUrl);
+        setShowInfoModal(true);
+    };
+
+    const handleInfoSubmit = (e) => {
+        e.preventDefault();
+        
+        // 유효성 검사
+        if (!userInfo.name || !userInfo.phone || !userInfo.email) {
+            alert('모든 정보를 입력해주세요.');
+            return;
+        }
+        
+        // 이메일 형식 검사
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(userInfo.email)) {
+            alert('올바른 이메일 형식을 입력해주세요.');
+            return;
+        }
+        
+        // 정보 저장
+        const userData = {
+            ...userInfo,
+            testDate: new Date().toISOString(),
+            testResult: localStorage.getItem('politicalTestResult')
+        };
+        localStorage.setItem('userInfo', JSON.stringify(userData));
+        
+        // 해설 페이지로 이동
+        window.open(targetArticle, '_blank');
+        setShowInfoModal(false);
+        setUserInfo({ name: '', phone: '', email: '' });
     };
 
 
@@ -296,60 +348,8 @@ function App() {
                     </div>
                 </div>
 
-                <div className="interpretation-section">
-                    <h3 className="interpretation-title">결과 해석 보러가기</h3>
-                    <p className="interpretation-description">
-                        각 영역별 상세한 해설과 개선 방법을 확인해보세요.
-                    </p>
-                    <div className="interpretation-links">
-                        <button 
-                            className="interpretation-btn" 
-                            onClick={() => window.open('https://newways.kr/article/self-competency', '_blank')}
-                        >
-                            자기 역량 해설 보기
-                        </button>
-                        <button 
-                            className="interpretation-btn" 
-                            onClick={() => window.open('https://newways.kr/article/local-activity', '_blank')}
-                        >
-                            지역 활동 역량 해설 보기
-                        </button>
-                        <button 
-                            className="interpretation-btn" 
-                            onClick={() => window.open('https://newways.kr/article/party-activity', '_blank')}
-                        >
-                            정당 활동 역량 해설 보기
-                        </button>
-                    </div>
-                </div>
-
-                <div className="share-section">
-                    <h3 className="share-title">결과 공유하기</h3>
-                    <div className="share-buttons">
-                        <button className="share-btn" onClick={() => {
-                            const text = `정치인 역량 테스트 결과: ${personalityType.type}\n${personalityType.message}\n\n테스트 하러가기: ${window.location.href}`;
-                            navigator.clipboard.writeText(text);
-                            alert('결과가 복사되었습니다!');
-                        }}>
-                            📋 결과 복사하기
-                        </button>
-                        <button className="share-btn" onClick={() => {
-                            const url = window.location.href;
-                            const text = `나의 정치인 역량 유형은 "${personalityType.type}"! 당신도 테스트해보세요!`;
-                            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
-                        }}>
-                            🐦 트위터 공유
-                        </button>
-                        <button className="share-btn" onClick={() => {
-                            const url = window.location.href;
-                            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
-                        }}>
-                            📘 페이스북 공유
-                        </button>
-                    </div>
-                </div>
-
                 <div className="bootcamp-section">
+                    <img src="images/bootcamp-logo.png" alt="뉴웨이즈 부트캠프" className="bootcamp-logo" />
                     <h3 className="bootcamp-title">정치 역량을 높이고 싶다면?</h3>
                     <p className="bootcamp-description">
                         뉴웨이즈 부트캠프에서 체계적인 교육과 멘토링을 통해 
@@ -359,9 +359,91 @@ function App() {
                         부트캠프 자세히 보기
                     </button>
                 </div>
+
+                <div className="interpretation-section">
+                    <h3 className="interpretation-title">결과 해석 보러가기</h3>
+                    <p className="interpretation-description">
+                        각 영역별 상세한 해설과 개선 방법을 확인해보세요.
+                    </p>
+                    <div className="interpretation-links">
+                        <button 
+                            className="interpretation-btn" 
+                            onClick={() => handleInterpretationClick('https://newways.kr/article/self-competency')}
+                        >
+                            자기 역량 해설 보기
+                        </button>
+                        <button 
+                            className="interpretation-btn" 
+                            onClick={() => handleInterpretationClick('https://newways.kr/article/local-activity')}
+                        >
+                            지역 활동 역량 해설 보기
+                        </button>
+                        <button 
+                            className="interpretation-btn" 
+                            onClick={() => handleInterpretationClick('https://newways.kr/article/party-activity')}
+                        >
+                            정당 활동 역량 해설 보기
+                        </button>
+                    </div>
+                </div>
+
+                <div className="share-link-section">
+                    <button className="share-link-btn" onClick={() => {
+                        const text = `정치인 역량 테스트 결과: ${personalityType.type}\n${personalityType.message}\n\n테스트 하러가기: ${window.location.href}`;
+                        navigator.clipboard.writeText(text);
+                        alert('링크가 복사되었습니다!');
+                    }}>
+                        🔗 결과 링크 복사하기
+                    </button>
+                </div>
             </div>
         );
     };
+
+    const renderInfoModal = () => (
+        <div className="modal-overlay" onClick={() => setShowInfoModal(false)}>
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                <h2 className="modal-title">결과 해설을 받아보세요</h2>
+                <p className="modal-description">
+                    상세한 해설 자료를 이메일로 보내드립니다.
+                </p>
+                <form onSubmit={handleInfoSubmit} className="info-form">
+                    <input
+                        type="text"
+                        placeholder="이름"
+                        value={userInfo.name}
+                        onChange={(e) => setUserInfo({...userInfo, name: e.target.value})}
+                        className="info-input"
+                        required
+                    />
+                    <input
+                        type="tel"
+                        placeholder="연락처 (010-0000-0000)"
+                        value={userInfo.phone}
+                        onChange={(e) => setUserInfo({...userInfo, phone: e.target.value})}
+                        className="info-input"
+                        required
+                    />
+                    <input
+                        type="email"
+                        placeholder="이메일"
+                        value={userInfo.email}
+                        onChange={(e) => setUserInfo({...userInfo, email: e.target.value})}
+                        className="info-input"
+                        required
+                    />
+                    <div className="modal-buttons">
+                        <button type="button" className="modal-cancel-btn" onClick={() => setShowInfoModal(false)}>
+                            취소
+                        </button>
+                        <button type="submit" className="modal-submit-btn">
+                            해설 보기
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    );
 
     return (
         <div className="container">
@@ -372,6 +454,7 @@ function App() {
             {currentScreen === 'start' && renderStartScreen()}
             {currentScreen === 'quiz' && renderQuiz()}
             {currentScreen === 'result' && renderResult()}
+            {showInfoModal && renderInfoModal()}
         </div>
     );
 }

@@ -1,14 +1,38 @@
-<!-- 캠페이너스 HTML 블록에 이 전체 코드를 복사해서 붙여넣으세요 -->
-<div id="political-test-container" style="max-width: 600px; margin: 0 auto;">
+<!-- 
+=====================================================
+캠페이너스 HTML 블록 삽입 가이드
+=====================================================
+1. 캠페이너스 관리자 페이지에 로그인
+2. 원하는 페이지의 편집 모드로 진입
+3. HTML 블록 추가 또는 기존 HTML 블록 편집
+4. 아래의 전체 코드를 복사하여 붙여넣기
+5. 저장 후 미리보기로 확인
+
+* GitHub Pages에 배포됨: https://nwseoyoung.github.io/political-test/
+=====================================================
+-->
+
+<!-- 옵션 1: iframe 임베드 방식 (권장) -->
+<div id="political-test-widget" style="width: 100%; max-width: 700px; margin: 0 auto;">
+    <iframe 
+        src="https://nwseoyoung.github.io/political-test/" 
+        style="width: 100%; height: 900px; border: none; border-radius: 12px;"
+        title="정치 역량 진단 테스트"
+        loading="lazy">
+    </iframe>
+</div>
+
+<!-- 옵션 2: 팝업 창 방식 (페이지 이탈 방지) -->
+<div id="political-test-launcher" style="max-width: 600px; margin: 0 auto;">
     <style>
-        #political-test-container * {
+        #political-test-launcher * {
             box-sizing: border-box;
         }
         
         .pt-widget {
             background: #1a1a1a;
             color: #fff;
-            padding: 20px;
+            padding: 30px;
             border-radius: 12px;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         }
@@ -20,35 +44,81 @@
         
         .pt-header h2 {
             font-size: 1.8rem;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            font-weight: 600;
         }
         
         .pt-description {
-            opacity: 0.8;
+            opacity: 0.9;
             margin-bottom: 20px;
             line-height: 1.6;
+            font-size: 1rem;
+        }
+        
+        .pt-features {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 30px 0;
         }
         
         .pt-card {
             background: #2a2a2a;
             border-radius: 8px;
             padding: 20px;
-            margin-bottom: 15px;
+            transition: background 0.3s ease;
+        }
+        
+        .pt-card:hover {
+            background: #333;
         }
         
         .pt-card h3 {
             color: #0d0;
             margin-bottom: 10px;
+            font-size: 1.1rem;
         }
         
         .pt-card p {
-            opacity: 0.8;
+            opacity: 0.85;
             line-height: 1.5;
+            font-size: 0.95rem;
+        }
+        
+        .pt-stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 25px 0;
+            padding: 20px 0;
+            border-top: 1px solid #333;
+            border-bottom: 1px solid #333;
+        }
+        
+        .pt-stat {
+            text-align: center;
+        }
+        
+        .pt-stat-number {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #0d0;
+        }
+        
+        .pt-stat-label {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            margin-top: 5px;
+        }
+        
+        .pt-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
         }
         
         .pt-button {
-            width: 100%;
-            padding: 15px;
+            flex: 1;
+            padding: 16px;
             background: #fff;
             color: #1a1a1a;
             border: none;
@@ -56,11 +126,34 @@
             font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
-            margin-top: 20px;
+            transition: all 0.3s ease;
         }
         
         .pt-button:hover {
             background: #f0f0f0;
+            transform: translateY(-2px);
+        }
+        
+        .pt-button-secondary {
+            background: transparent;
+            color: #fff;
+            border: 2px solid #0d0;
+        }
+        
+        .pt-button-secondary:hover {
+            background: #0d0;
+            color: #1a1a1a;
+        }
+        
+        @media (max-width: 480px) {
+            .pt-buttons {
+                flex-direction: column;
+            }
+            
+            .pt-stats {
+                flex-direction: column;
+                gap: 20px;
+            }
         }
     </style>
     
@@ -68,28 +161,90 @@
         <div class="pt-header">
             <h2>정치 역량 진단 테스트</h2>
             <p class="pt-description">
-                정치 입문을 준비하는 당신을 위한 역량 진단 테스트입니다.<br>
-                12개의 기본 질문과 52개의 세부 질문을 통해 종합적인 평가를 제공합니다.
+                정치 입문을 준비하는 당신을 위한 체계적인 역량 진단<br>
+                지금 바로 나의 정치 역량을 확인해보세요
             </p>
         </div>
         
-        <div class="pt-card">
-            <h3>자기 역량</h3>
-            <p>리더십, 전문성, 영향력 등 개인의 기본적인 정치 역량을 평가합니다.</p>
+        <div class="pt-stats">
+            <div class="pt-stat">
+                <div class="pt-stat-number">12</div>
+                <div class="pt-stat-label">기본 질문</div>
+            </div>
+            <div class="pt-stat">
+                <div class="pt-stat-number">52</div>
+                <div class="pt-stat-label">세부 항목</div>
+            </div>
+            <div class="pt-stat">
+                <div class="pt-stat-number">10분</div>
+                <div class="pt-stat-label">소요 시간</div>
+            </div>
         </div>
         
-        <div class="pt-card">
-            <h3>지역 활동</h3>
-            <p>지역 이해도, 네트워크, 활동 경험 등 지역 기반 역량을 측정합니다.</p>
+        <div class="pt-features">
+            <div class="pt-card">
+                <h3>자기 역량 진단</h3>
+                <p>리더십, 전문성, 영향력 등 개인의 기본적인 정치 역량을 평가합니다.</p>
+            </div>
+            
+            <div class="pt-card">
+                <h3>지역 활동 평가</h3>
+                <p>지역 이해도, 네트워크, 활동 경험 등 지역 기반 역량을 측정합니다.</p>
+            </div>
+            
+            <div class="pt-card">
+                <h3>정당 활동 분석</h3>
+                <p>정당 이해, 활동 경험, 네트워크 등 정당 내 활동 역량을 확인합니다.</p>
+            </div>
         </div>
         
-        <div class="pt-card">
-            <h3>정당 활동</h3>
-            <p>정당 이해, 활동 경험, 네트워크 등 정당 내 활동 역량을 확인합니다.</p>
+        <div class="pt-buttons">
+            <button class="pt-button" onclick="window.open('https://nwseoyoung.github.io/political-test/', 'politicalTest', 'width=700,height=900,scrollbars=yes,resizable=yes')">
+                테스트 시작하기
+            </button>
+            <button class="pt-button pt-button-secondary" onclick="window.open('https://nwseoyoung.github.io/political-test/', '_blank')">
+                새 탭에서 열기
+            </button>
         </div>
-        
-        <button class="pt-button" onclick="window.open('https://your-test-url.com', 'politicalTest', 'width=650,height=800')">
-            진단 테스트 시작하기
-        </button>
     </div>
 </div>
+
+<!-- 
+옵션 3: 동적 로딩 스크립트 방식 (고급)
+페이지 성능을 고려한 지연 로딩 방식
+-->
+<script>
+(function() {
+    // 스크롤 시 자동 로딩
+    var loadWidget = function() {
+        var container = document.getElementById('political-test-dynamic');
+        if (container && !container.dataset.loaded) {
+            var iframe = document.createElement('iframe');
+            iframe.src = 'https://nwseoyoung.github.io/political-test/';
+            iframe.style.width = '100%';
+            iframe.style.height = '900px';
+            iframe.style.border = 'none';
+            iframe.style.borderRadius = '12px';
+            iframe.title = '정치 역량 진단 테스트';
+            container.appendChild(iframe);
+            container.dataset.loaded = 'true';
+        }
+    };
+    
+    // Intersection Observer를 사용한 지연 로딩
+    if ('IntersectionObserver' in window) {
+        var observer = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    loadWidget();
+                    observer.disconnect();
+                }
+            });
+        });
+        
+        var target = document.getElementById('political-test-dynamic');
+        if (target) observer.observe(target);
+    }
+})();
+</script>
+<div id="political-test-dynamic" style="width: 100%; max-width: 700px; margin: 0 auto; min-height: 900px;"></div>
