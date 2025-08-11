@@ -15,6 +15,21 @@ function App() {
     const [targetArticle, setTargetArticle] = useState('');
 
     const handleStart = () => {
+        // 유효성 검사
+        if (!userInfo.name || !userInfo.phone || !userInfo.email) {
+            alert('모든 정보를 입력해주세요.');
+            return;
+        }
+        
+        // 이메일 형식 검사
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(userInfo.email)) {
+            alert('올바른 이메일 형식을 입력해주세요.');
+            return;
+        }
+        
+        // 정보 저장
+        localStorage.setItem('testUserInfo', JSON.stringify(userInfo));
         setCurrentScreen('quiz');
     };
 
@@ -51,9 +66,30 @@ function App() {
 
     const handlePrevious = () => {
         if (currentBaseQuestion > 0) {
-            setCurrentBaseQuestion(currentBaseQuestion - 1);
-            setSelectedDetails({});
-            setHasSelectedNone(false);
+            // 현재 선택사항을 전체 선택사항에 저장
+            const updatedAll = { ...allSelectedDetails, ...selectedDetails };
+            setAllSelectedDetails(updatedAll);
+            
+            // 이전 페이지로 이동
+            const prevQuestion = currentBaseQuestion - 1;
+            setCurrentBaseQuestion(prevQuestion);
+            
+            // 이전 페이지의 선택사항 복원
+            const prevQuestionDetails = {};
+            let hasNone = false;
+            baseQuestions[prevQuestion].detailQuestions.forEach(detailQ => {
+                if (updatedAll[detailQ.id]) {
+                    prevQuestionDetails[detailQ.id] = true;
+                }
+            });
+            
+            // 선택된 항목이 없으면 "해당항목 없음"이 선택된 것
+            if (Object.keys(prevQuestionDetails).length === 0) {
+                hasNone = true;
+            }
+            
+            setSelectedDetails(prevQuestionDetails);
+            setHasSelectedNone(hasNone);
         }
     };
 
@@ -144,24 +180,51 @@ function App() {
                     어떤 역량을 키워야 할지 스스로 목표를 세울 수 있어요.
                 </p>
                 
-                <div className="competency-intro">
-                    <div className="competency-card">
-                        <h3>자기 역량</h3>
-                        <p>리더십, 전문성, 영향력 등 개인의 기본적인 정치 역량을 평가합니다.</p>
-                    </div>
-                    <div className="competency-card">
-                        <h3>지역 활동</h3>
-                        <p>지역 이해도, 네트워크, 활동 경험 등 지역 기반 역량을 측정합니다.</p>
-                    </div>
-                    <div className="competency-card">
-                        <h3>정당 활동</h3>
-                        <p>정당 이해, 활동 경험, 네트워크 등 정당 내 활동 역량을 확인합니다.</p>
+                <div className="user-info-section">
+                    <p className="info-title">진단 결과를 보내드릴게요</p>
+                    <div className="info-form-inline">
+                        <input
+                            type="text"
+                            placeholder="이름"
+                            value={userInfo.name}
+                            onChange={(e) => setUserInfo({...userInfo, name: e.target.value})}
+                            className="start-input"
+                        />
+                        <input
+                            type="email"
+                            placeholder="이메일"
+                            value={userInfo.email}
+                            onChange={(e) => setUserInfo({...userInfo, email: e.target.value})}
+                            className="start-input"
+                        />
+                        <input
+                            type="tel"
+                            placeholder="연락처"
+                            value={userInfo.phone}
+                            onChange={(e) => setUserInfo({...userInfo, phone: e.target.value})}
+                            className="start-input"
+                        />
                     </div>
                 </div>
 
                 <button className="start-btn" onClick={handleStart}>
-                    진단하러 가기
+                    진단 시작하기
                 </button>
+                
+                <div className="competency-intro-small">
+                    <div className="competency-mini">
+                        <strong>자기 역량</strong>
+                        <span>리더십, 전문성, 영향력</span>
+                    </div>
+                    <div className="competency-mini">
+                        <strong>지역 활동</strong>
+                        <span>지역 이해도, 네트워크</span>
+                    </div>
+                    <div className="competency-mini">
+                        <strong>정당 활동</strong>
+                        <span>정당 이해, 활동 경험</span>
+                    </div>
+                </div>
             </div>
         </div>
     );
@@ -356,7 +419,7 @@ function App() {
                         뉴웨이즈 부트캠프에서 체계적인 교육과 멘토링을 통해 
                         정치 역량을 향상시킬 수 있습니다.
                     </p>
-                    <button className="cta-btn" onClick={() => window.open('https://newways.kr/bootcamp', '_blank')}>
+                    <button className="cta-btn" onClick={() => window.open('https://newways.kr/1daybootcamp?utm_source=homepage&utm_medium=landing&utm_campaign=1daycamp_selfcheck&utm_content=250813', '_blank')}>
                         부트캠프 자세히 보기
                     </button>
                 </div>
