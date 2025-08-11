@@ -35,6 +35,10 @@ export default async function handler(req, res) {
     const STIBEE_API_KEY = process.env.STIBEE_API_KEY; // Vercel 환경변수에 설정
     const STIBEE_LIST_ID = process.env.STIBEE_LIST_ID; // 스티비 리스트 ID
     
+    console.log('Received email request for:', user_email);
+    console.log('API Key exists:', !!STIBEE_API_KEY);
+    console.log('List ID:', STIBEE_LIST_ID);
+    
     try {
         // 1. 구독자 추가/업데이트
         const subscriberResponse = await fetch(
@@ -68,8 +72,12 @@ export default async function handler(req, res) {
         );
         
         if (!subscriberResponse.ok) {
-            throw new Error('Failed to add subscriber');
+            const errorText = await subscriberResponse.text();
+            console.error('Stibee subscriber error:', errorText);
+            throw new Error(`Failed to add subscriber: ${errorText}`);
         }
+        
+        console.log('Subscriber added successfully');
         
         // 2. 이메일 발송 (자동 이메일 시퀀스 트리거)
         // 스티비에서 "정치 역량 테스트 완료" 태그를 트리거로 하는 자동 이메일 설정 필요
@@ -89,8 +97,12 @@ export default async function handler(req, res) {
         );
         
         if (!tagResponse.ok) {
-            throw new Error('Failed to add tag');
+            const errorText = await tagResponse.text();
+            console.error('Stibee tag error:', errorText);
+            throw new Error(`Failed to add tag: ${errorText}`);
         }
+        
+        console.log('Tag added successfully');
         
         res.status(200).json({ success: true, message: 'Email sent successfully' });
         

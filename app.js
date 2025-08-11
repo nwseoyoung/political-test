@@ -149,20 +149,35 @@ function App() {
         };
         
         // 스티비 API를 통한 이메일 전송 (Vercel Functions 사용)
-        if (window.location.hostname.includes('vercel.app') || window.location.hostname.includes('newways.kr')) {
-            fetch('/api/send-email', {
+        if (window.location.hostname.includes('vercel.app') || window.location.hostname.includes('newways.kr') || window.location.hostname.includes('github.io')) {
+            console.log('이메일 전송 시도:', emailData.user_email);
+            
+            // API 엔드포인트 결정
+            const apiUrl = window.location.hostname.includes('github.io') 
+                ? 'https://political-test.vercel.app/api/send-email'
+                : '/api/send-email';
+            
+            fetch(apiUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(emailData)
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
             .then(data => {
                 console.log('스티비 이메일 전송 성공:', data);
+                // 사용자에게 알림 (선택사항)
+                // alert('진단 결과가 이메일로 전송되었습니다!');
             })
             .catch(error => {
-                console.log('스티비 이메일 전송 실패:', error);
+                console.error('스티비 이메일 전송 실패:', error);
+                // 실패해도 테스트는 계속 진행
             });
         }
         
