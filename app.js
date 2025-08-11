@@ -152,7 +152,8 @@ function App() {
         // 스티비 API를 통한 이메일 전송 (Vercel Functions 사용)
         // Vercel에 배포된 경우에만 작동
         const isProduction = window.location.hostname.includes('vercel.app') || 
-                           window.location.hostname.includes('newways.kr');
+                           window.location.hostname.includes('newways.kr') ||
+                           window.location.hostname === 'political-test-three.vercel.app';
         
         if (isProduction) {
             console.log('이메일 전송 시도:', emailData.user_email);
