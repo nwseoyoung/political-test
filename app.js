@@ -1,9 +1,10 @@
 const { useState, useEffect } = React;
 
-// EmailJS 초기화 (실제 PUBLIC_KEY로 교체 필요)
-if (typeof emailjs !== 'undefined') {
-    emailjs.init("YOUR_PUBLIC_KEY"); // email-config.js의 PUBLIC_KEY 값으로 교체
-}
+// EmailJS 초기화 - 설정되어 있을 때만
+// EmailJS를 사용하려면 YOUR_PUBLIC_KEY를 실제 키로 교체하세요
+// if (typeof emailjs !== 'undefined') {
+//     emailjs.init("YOUR_PUBLIC_KEY");
+// }
 
 function App() {
     const [currentScreen, setCurrentScreen] = useState('start');
@@ -149,15 +150,14 @@ function App() {
         };
         
         // 스티비 API를 통한 이메일 전송 (Vercel Functions 사용)
-        if (window.location.hostname.includes('vercel.app') || window.location.hostname.includes('newways.kr') || window.location.hostname.includes('github.io')) {
+        // Vercel에 배포된 경우에만 작동
+        const isProduction = window.location.hostname.includes('vercel.app') || 
+                           window.location.hostname.includes('newways.kr');
+        
+        if (isProduction) {
             console.log('이메일 전송 시도:', emailData.user_email);
             
-            // API 엔드포인트 결정
-            const apiUrl = window.location.hostname.includes('github.io') 
-                ? 'https://political-test.vercel.app/api/send-email'
-                : '/api/send-email';
-            
-            fetch(apiUrl, {
+            fetch('/api/send-email', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -165,6 +165,7 @@ function App() {
                 body: JSON.stringify(emailData)
             })
             .then(response => {
+                console.log('Response status:', response.status);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -179,6 +180,23 @@ function App() {
                 console.error('스티비 이메일 전송 실패:', error);
                 // 실패해도 테스트는 계속 진행
             });
+        } else if (window.location.hostname.includes('github.io')) {
+            // GitHub Pages에서 테스트하는 경우
+            console.log('GitHub Pages에서는 Vercel API를 직접 호출합니다.');
+            console.log('Vercel에 배포된 버전에서 이메일이 발송됩니다.');
+            
+            // 선택사항: Vercel API 직접 호출
+            // fetch('https://political-test.vercel.app/api/send-email', {
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //     },
+            //     body: JSON.stringify(emailData)
+            // }).then(response => {
+            //     console.log('Cross-origin 이메일 전송 시도:', response.status);
+            // }).catch(error => {
+            //     console.log('Cross-origin 요청 실패 (예상된 동작):', error);
+            // });
         }
         
         // EmailJS 백업 (설정되어 있는 경우)
