@@ -1,9 +1,20 @@
 {
   "name": "political-test",
-  "version": 2,
+  "buildCommand": "echo 'No build required'",
+  "outputDirectory": ".",
+  "framework": null,
+  "functions": {
+    "api/send-email.js": {
+      "maxDuration": 10
+    }
+  },
   "rewrites": [
     {
-      "source": "/",
+      "source": "/api/(.*)",
+      "destination": "/api/$1"
+    },
+    {
+      "source": "/(.*)",
       "destination": "/index.html"
     }
   ]
