@@ -123,12 +123,6 @@ function App() {
     };
     
     const sendResultEmail = (totalScore, selfScore, localScore, partyScore) => {
-        // EmailJS가 로드되었고 사용자 정보가 있는 경우에만 전송
-        if (typeof emailjs === 'undefined') {
-            console.log('EmailJS가 설정되지 않았습니다.');
-            return;
-        }
-        
         const savedUserInfo = localStorage.getItem('testUserInfo');
         if (!savedUserInfo) return;
         
@@ -138,7 +132,7 @@ function App() {
         // 선택한 문항들을 카테고리별로 정리
         const selectedItemsByCategory = getSelectedItemsByCategory();
         
-        const templateParams = {
+        const emailData = {
             user_name: user.name,
             user_email: user.email,
             user_phone: user.phone,
@@ -149,22 +143,46 @@ function App() {
             party_score: partyScore,
             personality_type: personalityType.type,
             personality_message: personalityType.message,
-            test_url: window.location.href,
-            guide_url: 'https://newwayskr.notion.site/249441828a8280c58a57c9d75b8cd1d3',
-            bootcamp_url: 'https://newways.kr/1daybootcamp?utm_source=homepage&utm_medium=email&utm_campaign=1daycamp_selfcheck&utm_content=250813',
             selected_self: selectedItemsByCategory.self.join('\n'),
             selected_local: selectedItemsByCategory.local.join('\n'),
             selected_party: selectedItemsByCategory.party.join('\n')
         };
         
-        // EmailJS로 이메일 전송 (SERVICE_ID와 TEMPLATE_ID 교체 필요)
-        emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', templateParams)
-            .then((response) => {
-                console.log('이메일 전송 성공!', response.status, response.text);
+        // 스티비 API를 통한 이메일 전송 (Vercel Functions 사용)
+        if (window.location.hostname.includes('vercel.app') || window.location.hostname.includes('newways.kr')) {
+            fetch('/api/send-email', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(emailData)
             })
-            .catch((error) => {
-                console.log('이메일 전송 실패:', error);
+            .then(response => response.json())
+            .then(data => {
+                console.log('스티비 이메일 전송 성공:', data);
+            })
+            .catch(error => {
+                console.log('스티비 이메일 전송 실패:', error);
             });
+        }
+        
+        // EmailJS 백업 (설정되어 있는 경우)
+        if (typeof emailjs !== 'undefined' && emailjs.init) {
+            const templateParams = {
+                ...emailData,
+                test_url: window.location.href,
+                guide_url: 'https://newwayskr.notion.site/249441828a8280c58a57c9d75b8cd1d3',
+                bootcamp_url: 'https://newways.kr/1daybootcamp?utm_source=homepage&utm_medium=email&utm_campaign=1daycamp_selfcheck&utm_content=250813'
+            };
+            
+            emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', templateParams)
+                .then((response) => {
+                    console.log('EmailJS 전송 성공!', response.status);
+                })
+                .catch((error) => {
+                    console.log('EmailJS 전송 실패:', error);
+                });
+        }
     };
     
     const getSelectedItemsByCategory = () => {

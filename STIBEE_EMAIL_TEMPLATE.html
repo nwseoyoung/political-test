@@ -1,0 +1,178 @@
+<!-- 스티비 이메일 템플릿 - 이 내용을 스티비 HTML 에디터에 복사하세요 -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>정치 역량 진단 결과</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; background-color: #f5f5f5;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f5f5f5; padding: 20px 0;">
+        <tr>
+            <td align="center">
+                <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                    
+                    <!-- 헤더 -->
+                    <tr>
+                        <td style="background: linear-gradient(135deg, #DAE000 0%, #c5cc00 100%); padding: 40px 30px; text-align: center;">
+                            <h1 style="margin: 0; color: #1a1a1a; font-size: 28px; font-weight: 800;">정치 역량 진단 결과</h1>
+                            <p style="margin: 10px 0 0 0; color: #1a1a1a; font-size: 16px;">$%name%$님의 진단 결과입니다</p>
+                        </td>
+                    </tr>
+                    
+                    <!-- 본문 컨테이너 -->
+                    <tr>
+                        <td style="padding: 40px 30px;">
+                            
+                            <!-- 진단 결과 섹션 -->
+                            <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 30px;">
+                                <tr>
+                                    <td>
+                                        <h2 style="color: #1a1a1a; font-size: 20px; margin: 0 0 20px 0;">📊 진단 결과</h2>
+                                        <p style="color: #666; font-size: 15px; line-height: 1.6; margin: 5px 0;">진단일: $%test_date%$</p>
+                                        <p style="color: #333; font-size: 16px; line-height: 1.6; margin: 10px 0;">
+                                            총 점수: <span style="background: #DAE000; color: #1a1a1a; padding: 5px 12px; border-radius: 4px; font-weight: bold;">$%total_score%$/52점</span>
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                            <!-- 세부 점수 섹션 -->
+                            <table width="100%" cellpadding="0" cellspacing="0" style="background: #f8f9fa; border-radius: 8px; padding: 20px; margin-bottom: 30px;">
+                                <tr>
+                                    <td>
+                                        <h3 style="color: #1a1a1a; font-size: 18px; margin: 0 0 15px 0;">📈 세부 점수</h3>
+                                        <table width="100%" cellpadding="5" cellspacing="0">
+                                            <tr>
+                                                <td style="color: #666; font-size: 15px;">• 자기 역량:</td>
+                                                <td style="color: #1a1a1a; font-size: 15px; font-weight: bold; text-align: right;">$%self_score%$/18점</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="color: #666; font-size: 15px;">• 지역 활동:</td>
+                                                <td style="color: #1a1a1a; font-size: 15px; font-weight: bold; text-align: right;">$%local_score%$/19점</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="color: #666; font-size: 15px;">• 정당 활동:</td>
+                                                <td style="color: #1a1a1a; font-size: 15px; font-weight: bold; text-align: right;">$%party_score%$/15점</td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                            <!-- 진단 유형 섹션 -->
+                            <table width="100%" cellpadding="0" cellspacing="0" style="background: #f8f9fa; border-radius: 8px; padding: 20px; margin-bottom: 30px;">
+                                <tr>
+                                    <td>
+                                        <h3 style="color: #1a1a1a; font-size: 18px; margin: 0 0 10px 0;">🎯 진단 유형</h3>
+                                        <p style="color: #DAE000; font-size: 18px; font-weight: bold; margin: 10px 0;">$%personality_type%$</p>
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                            <!-- 구분선 -->
+                            <hr style="border: none; border-top: 2px solid #e9ecef; margin: 40px 0;">
+                            
+                            <!-- 선택한 역량들 섹션 -->
+                            <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 30px;">
+                                <tr>
+                                    <td>
+                                        <h2 style="color: #1a1a1a; font-size: 20px; margin: 0 0 25px 0;">📝 내가 선택한 역량들</h2>
+                                        
+                                        <!-- 자기 역량 -->
+                                        <h3 style="color: #333; font-size: 16px; margin: 20px 0 10px 0;">【자기 역량】</h3>
+                                        <div style="border-left: 3px solid #DAE000; padding-left: 15px; margin-bottom: 20px;">
+                                            <pre style="color: #666; font-size: 14px; line-height: 1.8; white-space: pre-wrap; font-family: 'Pretendard', sans-serif; margin: 0;">$%selected_self%$</pre>
+                                        </div>
+                                        
+                                        <!-- 지역 활동 -->
+                                        <h3 style="color: #333; font-size: 16px; margin: 20px 0 10px 0;">【지역 활동】</h3>
+                                        <div style="border-left: 3px solid #DAE000; padding-left: 15px; margin-bottom: 20px;">
+                                            <pre style="color: #666; font-size: 14px; line-height: 1.8; white-space: pre-wrap; font-family: 'Pretendard', sans-serif; margin: 0;">$%selected_local%$</pre>
+                                        </div>
+                                        
+                                        <!-- 정당 활동 -->
+                                        <h3 style="color: #333; font-size: 16px; margin: 20px 0 10px 0;">【정당 활동】</h3>
+                                        <div style="border-left: 3px solid #DAE000; padding-left: 15px; margin-bottom: 20px;">
+                                            <pre style="color: #666; font-size: 14px; line-height: 1.8; white-space: pre-wrap; font-family: 'Pretendard', sans-serif; margin: 0;">$%selected_party%$</pre>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                            <!-- 구분선 -->
+                            <hr style="border: none; border-top: 2px solid #e9ecef; margin: 40px 0;">
+                            
+                            <!-- 해설지 섹션 -->
+                            <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 30px;">
+                                <tr>
+                                    <td>
+                                        <h2 style="color: #1a1a1a; font-size: 20px; margin: 0 0 15px 0;">📖 정치인 역량 테스트 결과 해설지</h2>
+                                        <p style="color: #666; font-size: 15px; line-height: 1.6; margin: 0 0 20px 0;">
+                                            각 문항과 역량이 왜 중요한지 해설과 함께 살펴보며,<br>
+                                            어떻게 역량과 경험을 쌓아야 하는지 계획을 세워보세요.
+                                        </p>
+                                        <table cellpadding="0" cellspacing="0">
+                                            <tr>
+                                                <td align="center" style="background: #DAE000; border-radius: 6px; padding: 0;">
+                                                    <a href="https://newwayskr.notion.site/249441828a8280c58a57c9d75b8cd1d3" 
+                                                       style="display: inline-block; padding: 14px 30px; color: #1a1a1a; text-decoration: none; font-weight: bold; font-size: 16px;">
+                                                        해설지 보기
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                            <!-- 부트캠프 섹션 -->
+                            <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 30px;">
+                                <tr>
+                                    <td>
+                                        <h2 style="color: #1a1a1a; font-size: 20px; margin: 0 0 15px 0;">💡 다음 단계: 뉴웨이즈 부트캠프</h2>
+                                        <p style="color: #666; font-size: 15px; line-height: 1.6; margin: 0 0 20px 0;">
+                                            체계적인 교육과 멘토링을 통해 정치 역량을 향상시킬 수 있습니다.
+                                        </p>
+                                        <table cellpadding="0" cellspacing="0">
+                                            <tr>
+                                                <td align="center" style="background: #DAE000; border-radius: 6px; padding: 0;">
+                                                    <a href="https://newways.kr/1daybootcamp?utm_source=homepage&utm_medium=email&utm_campaign=1daycamp_selfcheck&utm_content=250813" 
+                                                       style="display: inline-block; padding: 14px 30px; color: #1a1a1a; text-decoration: none; font-weight: bold; font-size: 16px;">
+                                                        부트캠프 신청하기
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                        </td>
+                    </tr>
+                    
+                    <!-- 푸터 -->
+                    <tr>
+                        <td style="background: #f8f9fa; padding: 30px; text-align: center; border-top: 1px solid #e9ecef;">
+                            <p style="margin: 0 0 15px 0;">
+                                <a href="https://newways.kr/ready-to-test?utm_source=stibee&utm_medium=email&utm_campaign=selfcheck_retest&utm_content=250813" 
+                                   style="color: #DAE000; text-decoration: none; font-weight: bold; font-size: 15px;">
+                                   다시 테스트하기 →
+                                </a>
+                            </p>
+                            <p style="color: #999; font-size: 13px; margin: 0 0 5px 0;">
+                                문의사항이 있으시면 언제든 연락주세요.
+                            </p>
+                            <p style="color: #666; font-size: 14px; margin: 10px 0 0 0;">
+                                감사합니다.<br>
+                                <strong>뉴웨이즈 팀 드림</strong>
+                            </p>
+                        </td>
+                    </tr>
+                    
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
