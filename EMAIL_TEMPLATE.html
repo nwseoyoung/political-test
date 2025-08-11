@@ -1,0 +1,84 @@
+<!-- EmailJS에서 사용할 이메일 템플릿 (HTML 형식) -->
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: 'Pretendard', -apple-system, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: linear-gradient(135deg, #DAE000, #c5cc00); padding: 30px; border-radius: 10px 10px 0 0; text-align: center; color: #1a1a1a; }
+        .content { background: white; padding: 30px; border: 1px solid #e9ecef; }
+        .section { margin: 25px 0; padding: 20px; background: #f8f9fa; border-radius: 8px; }
+        .score-box { display: inline-block; padding: 5px 10px; background: #DAE000; color: #1a1a1a; border-radius: 4px; font-weight: bold; }
+        .btn { display: inline-block; padding: 12px 30px; background: #DAE000; color: #1a1a1a; text-decoration: none; border-radius: 6px; font-weight: bold; margin: 10px 0; }
+        .divider { border-top: 2px solid #e9ecef; margin: 30px 0; }
+        h2 { color: #1a1a1a; font-size: 20px; }
+        h3 { color: #333; font-size: 16px; margin-top: 20px; }
+        .selected-items { background: white; border-left: 3px solid #DAE000; padding-left: 15px; margin: 10px 0; }
+        .footer { text-align: center; color: #666; font-size: 14px; margin-top: 30px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>정치 역량 진단 결과</h1>
+            <p>{{user_name}}님의 진단 결과입니다</p>
+        </div>
+        
+        <div class="content">
+            <h2>📊 진단 결과</h2>
+            <p>진단일: {{test_date}}</p>
+            <p>총 점수: <span class="score-box">{{total_score}}/52점</span></p>
+            
+            <div class="section">
+                <h3>📈 세부 점수</h3>
+                <p>• 자기 역량: <strong>{{self_score}}/18점</strong></p>
+                <p>• 지역 활동: <strong>{{local_score}}/19점</strong></p>
+                <p>• 정당 활동: <strong>{{party_score}}/15점</strong></p>
+            </div>
+            
+            <div class="section">
+                <h3>🎯 진단 유형</h3>
+                <p><strong>{{personality_type}}</strong></p>
+                <p>{{personality_message}}</p>
+            </div>
+            
+            <div class="divider"></div>
+            
+            <h2>📝 내가 선택한 역량들</h2>
+            
+            <h3>【자기 역량】</h3>
+            <div class="selected-items">
+                <pre style="white-space: pre-wrap;">{{selected_self}}</pre>
+            </div>
+            
+            <h3>【지역 활동】</h3>
+            <div class="selected-items">
+                <pre style="white-space: pre-wrap;">{{selected_local}}</pre>
+            </div>
+            
+            <h3>【정당 활동】</h3>
+            <div class="selected-items">
+                <pre style="white-space: pre-wrap;">{{selected_party}}</pre>
+            </div>
+            
+            <div class="divider"></div>
+            
+            <h2>📖 결과 해설지</h2>
+            <p>각 문항과 역량이 왜 중요한지 해설과 함께 살펴보며,<br>
+            어떻게 역량과 경험을 쌓아야 하는지 계획을 세워보세요.</p>
+            <p><a href="{{guide_url}}" class="btn">해설지 보기</a></p>
+            
+            <h2>💡 다음 단계</h2>
+            <p>뉴웨이즈 부트캠프에서 체계적인 교육과 멘토링을 통해<br>
+            정치 역량을 향상시킬 수 있습니다.</p>
+            <p><a href="{{bootcamp_url}}" class="btn">부트캠프 신청하기</a></p>
+            
+            <div class="footer">
+                <p><a href="{{test_url}}">다시 테스트하기</a></p>
+                <p>문의사항이 있으시면 언제든 연락주세요.</p>
+                <p>감사합니다.<br>뉴웨이즈 팀 드림</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,5 +1,10 @@
 const { useState, useEffect } = React;
 
+// EmailJS 초기화 (실제 PUBLIC_KEY로 교체 필요)
+if (typeof emailjs !== 'undefined') {
+    emailjs.init("YOUR_PUBLIC_KEY"); // email-config.js의 PUBLIC_KEY 값으로 교체
+}
+
 function App() {
     const [currentScreen, setCurrentScreen] = useState('start');
     const [currentBaseQuestion, setCurrentBaseQuestion] = useState(0);
@@ -95,16 +100,150 @@ function App() {
 
     const calculateResults = () => {
         setCurrentScreen('result');
+        
+        // 점수 계산
+        const totalScore = getTotalAnsweredCount();
+        const selfScore = getCategoryScore('자기 역량');
+        const localScore = getCategoryScore('지역 활동');
+        const partyScore = getCategoryScore('정당 활동');
+        
         // 결과를 localStorage에 저장
         const resultData = {
             date: new Date().toISOString(),
             allSelectedDetails,
-            totalScore: getTotalAnsweredCount(),
-            selfScore: getCategoryScore('자기 역량'),
-            localScore: getCategoryScore('지역 활동'),
-            partyScore: getCategoryScore('정당 활동')
+            totalScore,
+            selfScore,
+            localScore,
+            partyScore
         };
         localStorage.setItem('politicalTestResult', JSON.stringify(resultData));
+        
+        // 이메일 전송 (EmailJS 설정이 있는 경우)
+        sendResultEmail(totalScore, selfScore, localScore, partyScore);
+    };
+    
+    const sendResultEmail = (totalScore, selfScore, localScore, partyScore) => {
+        // EmailJS가 로드되었고 사용자 정보가 있는 경우에만 전송
+        if (typeof emailjs === 'undefined') {
+            console.log('EmailJS가 설정되지 않았습니다.');
+            return;
+        }
+        
+        const savedUserInfo = localStorage.getItem('testUserInfo');
+        if (!savedUserInfo) return;
+        
+        const user = JSON.parse(savedUserInfo);
+        const personalityType = getPersonalityTypeForEmail(selfScore, localScore, partyScore);
+        
+        // 선택한 문항들을 카테고리별로 정리
+        const selectedItemsByCategory = getSelectedItemsByCategory();
+        
+        const templateParams = {
+            user_name: user.name,
+            user_email: user.email,
+            user_phone: user.phone,
+            test_date: new Date().toLocaleDateString('ko-KR'),
+            total_score: totalScore,
+            self_score: selfScore,
+            local_score: localScore,
+            party_score: partyScore,
+            personality_type: personalityType.type,
+            personality_message: personalityType.message,
+            test_url: window.location.href,
+            guide_url: 'https://newwayskr.notion.site/249441828a8280c58a57c9d75b8cd1d3',
+            bootcamp_url: 'https://newways.kr/1daybootcamp?utm_source=homepage&utm_medium=email&utm_campaign=1daycamp_selfcheck&utm_content=250813',
+            selected_self: selectedItemsByCategory.self.join('\n'),
+            selected_local: selectedItemsByCategory.local.join('\n'),
+            selected_party: selectedItemsByCategory.party.join('\n')
+        };
+        
+        // EmailJS로 이메일 전송 (SERVICE_ID와 TEMPLATE_ID 교체 필요)
+        emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', templateParams)
+            .then((response) => {
+                console.log('이메일 전송 성공!', response.status, response.text);
+            })
+            .catch((error) => {
+                console.log('이메일 전송 실패:', error);
+            });
+    };
+    
+    const getSelectedItemsByCategory = () => {
+        const selectedItems = {
+            self: [],
+            local: [],
+            party: []
+        };
+        
+        baseQuestions.forEach(baseQ => {
+            baseQ.detailQuestions.forEach(detailQ => {
+                if (allSelectedDetails[detailQ.id]) {
+                    const itemText = `• ${detailQ.text}`;
+                    
+                    if (baseQ.category === '자기 역량') {
+                        selectedItems.self.push(itemText);
+                    } else if (baseQ.category === '지역 활동') {
+                        selectedItems.local.push(itemText);
+                    } else if (baseQ.category === '정당 활동') {
+                        selectedItems.party.push(itemText);
+                    }
+                }
+            });
+        });
+        
+        // 선택한 항목이 없는 경우 처리
+        if (selectedItems.self.length === 0) selectedItems.self.push('• 선택한 항목 없음');
+        if (selectedItems.local.length === 0) selectedItems.local.push('• 선택한 항목 없음');
+        if (selectedItems.party.length === 0) selectedItems.party.push('• 선택한 항목 없음');
+        
+        return selectedItems;
+    };
+    
+    const getPersonalityTypeForEmail = (selfScore, localScore, partyScore) => {
+        const selfHigh = selfScore >= 9;
+        const localHigh = localScore >= 10;
+        const partyHigh = partyScore >= 8;
+        
+        if (selfHigh && localHigh && partyHigh) {
+            return {
+                type: '출마 준비를 마쳤습니다',
+                message: '모든 역량이 준비되었습니다! 출마를 고려해보세요.'
+            };
+        } else if (selfHigh && !localHigh && partyHigh) {
+            return {
+                type: '비례 영입인재',
+                message: '정당활동은 부족하지만 전문성이 뛰어납니다.'
+            };
+        } else if (selfHigh && localHigh && !partyHigh) {
+            return {
+                type: '지역 영입인재',
+                message: '정당활동은 부족하지만 역량이 우수합니다.'
+            };
+        } else if (selfHigh && !localHigh && !partyHigh) {
+            return {
+                type: '당 리더십, 청년위원장형 인재',
+                message: '정당 내 활동에 강점이 있습니다.'
+            };
+        } else if (!selfHigh && !localHigh && partyHigh) {
+            return {
+                type: '정당활동만 치우친 유형',
+                message: '더 많은 준비가 필요합니다. 본인만의 전문 역량을 길러보세요.'
+            };
+        } else if (!selfHigh && localHigh && !partyHigh) {
+            return {
+                type: '선택과 집중, 리더십 만들기',
+                message: '리더십, 전문성 등 특정 영역에 집중해 역량을 키워보세요.'
+            };
+        } else if (!selfHigh && !localHigh && !partyHigh) {
+            return {
+                type: '자기역량부터 만들기',
+                message: '나만의 전문성부터 차근차근 쌓아가세요.'
+            };
+        } else {
+            return {
+                type: '선택과 집중, 전문성 만들기',
+                message: '리더십, 전문성 등 특정 영역에 집중해 역량을 키워보세요.'
+            };
+        }
     };
 
     const handleInterpretationClick = (articleUrl) => {
