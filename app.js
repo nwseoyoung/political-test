@@ -16,13 +16,18 @@ function App() {
     const [userInfo, setUserInfo] = useState({
         name: '',
         phone: '',
-        email: ''
+        email: '',
+        candidateIntention: ''
     });
+    const [privacyAgree, setPrivacyAgree] = useState(false);
+    const [thirdPartyAgree, setThirdPartyAgree] = useState(false);
+    const [marketingAgree, setMarketingAgree] = useState(false);
+    const [showPrivacyModal, setShowPrivacyModal] = useState(false);
     const [targetArticle, setTargetArticle] = useState('');
 
     const handleStart = () => {
         // 유효성 검사
-        if (!userInfo.name || !userInfo.phone || !userInfo.email) {
+        if (!userInfo.name || !userInfo.phone || !userInfo.email || !userInfo.candidateIntention) {
             alert('모든 정보를 입력해주세요.');
             return;
         }
@@ -34,9 +39,52 @@ function App() {
             return;
         }
         
+        // 개인정보 동의 확인
+        if (!privacyAgree || !thirdPartyAgree) {
+            alert('필수 동의 항목을 확인해주세요.');
+            return;
+        }
+        
         // 정보 저장
-        localStorage.setItem('testUserInfo', JSON.stringify(userInfo));
+        const userDataWithConsent = {
+            ...userInfo,
+            privacyAgree,
+            thirdPartyAgree,
+            marketingAgree,
+            consentDate: new Date().toISOString()
+        };
+        localStorage.setItem('testUserInfo', JSON.stringify(userDataWithConsent));
+        
+        // 구글 스프레드시트로 데이터 전송
+        sendToGoogleSheets(userDataWithConsent);
+        
         setCurrentScreen('quiz');
+    };
+    
+    const sendToGoogleSheets = (userData) => {
+        // Google Apps Script Web App URL (나중에 실제 URL로 교체 필요)
+        const GOOGLE_SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_URL';
+        
+        if (GOOGLE_SCRIPT_URL && GOOGLE_SCRIPT_URL !== 'YOUR_GOOGLE_APPS_SCRIPT_URL') {
+            fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    timestamp: new Date().toISOString(),
+                    name: userData.name,
+                    email: userData.email,
+                    phone: userData.phone,
+                    candidateIntention: userData.candidateIntention,
+                    marketingAgree: userData.marketingAgree ? 'Y' : 'N',
+                    source: window.location.hostname
+                })
+            }).catch(error => {
+                console.log('Google Sheets 전송 실패:', error);
+            });
+        }
     };
 
     const handleDetailToggle = (questionId) => {
@@ -137,6 +185,8 @@ function App() {
             user_name: user.name,
             user_email: user.email,
             user_phone: user.phone,
+            candidate_intention: user.candidateIntention,
+            marketing_agree: user.marketingAgree ? 'Y' : 'N',
             test_date: new Date().toLocaleDateString('ko-KR'),
             total_score: totalScore,
             self_score: selfScore,
@@ -395,6 +445,112 @@ function App() {
                             onChange={(e) => setUserInfo({...userInfo, phone: e.target.value})}
                             className="start-input"
                         />
+                    </div>
+                    
+                    <div className="candidate-section">
+                        <p className="candidate-title">출마 계획이 있으신가요?</p>
+                        <div className="candidate-options">
+                            <label className="radio-label">
+                                <input
+                                    type="radio"
+                                    name="candidateIntention"
+                                    value="언젠가 출마할 것이다"
+                                    checked={userInfo.candidateIntention === '언젠가 출마할 것이다'}
+                                    onChange={(e) => setUserInfo({...userInfo, candidateIntention: e.target.value})}
+                                />
+                                <span>언젠가 출마할 것이다</span>
+                            </label>
+                            <label className="radio-label">
+                                <input
+                                    type="radio"
+                                    name="candidateIntention"
+                                    value="2026 지방선거에 출마할 것이다"
+                                    checked={userInfo.candidateIntention === '2026 지방선거에 출마할 것이다'}
+                                    onChange={(e) => setUserInfo({...userInfo, candidateIntention: e.target.value})}
+                                />
+                                <span>2026 지방선거에 출마할 것이다</span>
+                            </label>
+                            <label className="radio-label">
+                                <input
+                                    type="radio"
+                                    name="candidateIntention"
+                                    value="출마를 고민하거나 계획하고 있다"
+                                    checked={userInfo.candidateIntention === '출마를 고민하거나 계획하고 있다'}
+                                    onChange={(e) => setUserInfo({...userInfo, candidateIntention: e.target.value})}
+                                />
+                                <span>출마를 고민하거나 계획하고 있다</span>
+                            </label>
+                            <label className="radio-label">
+                                <input
+                                    type="radio"
+                                    name="candidateIntention"
+                                    value="출마를 고려하지 않는다"
+                                    checked={userInfo.candidateIntention === '출마를 고려하지 않는다'}
+                                    onChange={(e) => setUserInfo({...userInfo, candidateIntention: e.target.value})}
+                                />
+                                <span>출마를 고려하지 않는다</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div className="privacy-section">
+                        <div className="privacy-item required">
+                            <label className="checkbox-label">
+                                <input
+                                    type="checkbox"
+                                    checked={privacyAgree}
+                                    onChange={(e) => setPrivacyAgree(e.target.checked)}
+                                />
+                                <span>(필수) 개인정보 수집·이용에 동의합니다</span>
+                            </label>
+                            <button className="privacy-detail-btn" onClick={() => setShowPrivacyModal('privacy')}>
+                                자세히
+                            </button>
+                        </div>
+                        
+                        <div className="privacy-item required">
+                            <label className="checkbox-label">
+                                <input
+                                    type="checkbox"
+                                    checked={thirdPartyAgree}
+                                    onChange={(e) => setThirdPartyAgree(e.target.checked)}
+                                />
+                                <span>(필수) 개인정보 제3자 제공에 동의합니다</span>
+                            </label>
+                            <button className="privacy-detail-btn" onClick={() => setShowPrivacyModal('thirdParty')}>
+                                자세히
+                            </button>
+                        </div>
+                        
+                        <div className="privacy-item">
+                            <label className="checkbox-label">
+                                <input
+                                    type="checkbox"
+                                    checked={marketingAgree}
+                                    onChange={(e) => setMarketingAgree(e.target.checked)}
+                                />
+                                <span>(선택) 마케팅 정보 수신에 동의합니다</span>
+                            </label>
+                            <button className="privacy-detail-btn" onClick={() => setShowPrivacyModal('marketing')}>
+                                자세히
+                            </button>
+                        </div>
+                        
+                        <div className="privacy-all">
+                            <label className="checkbox-label">
+                                <input
+                                    type="checkbox"
+                                    checked={privacyAgree && thirdPartyAgree && marketingAgree}
+                                    onChange={(e) => {
+                                        const checked = e.target.checked;
+                                        setPrivacyAgree(checked);
+                                        setThirdPartyAgree(checked);
+                                        setMarketingAgree(checked);
+                                    }}
+                                />
+                                <span>전체 동의</span>
+                            </label>
+                        </div>
                     </div>
                 </div>
 
@@ -700,12 +856,107 @@ function App() {
         </div>
     );
 
+    const renderPrivacyModal = () => {
+        if (!showPrivacyModal) return null;
+        
+        const getPrivacyContent = () => {
+            switch(showPrivacyModal) {
+                case 'privacy':
+                    return {
+                        title: '개인정보 수집·이용 동의',
+                        content: `
+1. 수집하는 개인정보 항목
+   - 필수항목: 이름, 이메일, 연락처, 출마 의사
+   - 선택항목: 테스트 결과, 선택한 역량 항목
+
+2. 개인정보 수집·이용 목적
+   - 정치 역량 테스트 결과 제공
+   - 맞춤형 교육 프로그램 안내
+   - 정치 관련 정보 및 소식 전달 (동의 시)
+
+3. 개인정보 보유 및 이용 기간
+   - 수집일로부터 3년
+   - 단, 관계 법령에 따라 보존할 필요가 있는 경우 해당 기간 동안 보존
+
+4. 동의를 거부할 권리
+   - 위 개인정보 수집·이용에 대한 동의를 거부할 권리가 있습니다.
+   - 필수항목 동의 거부 시 서비스 이용이 제한됩니다.`
+                    };
+                case 'thirdParty':
+                    return {
+                        title: '개인정보 제3자 제공 동의',
+                        content: `
+1. 제공받는 자
+   - 스티비(Stibee): 이메일 발송 서비스
+   - Google: 데이터 분석 및 저장
+
+2. 제공하는 개인정보 항목
+   - 스티비: 이름, 이메일, 연락처, 테스트 결과
+   - Google: 이름, 이메일, 출마 의사, 테스트 일시
+
+3. 제공받는 자의 이용 목적
+   - 스티비: 테스트 결과 이메일 발송 및 마케팅 정보 전달
+   - Google: 통계 분석 및 서비스 개선
+
+4. 보유 및 이용 기간
+   - 제공 목적 달성 시까지
+   - 회원 탈퇴 또는 동의 철회 시 즉시 파기
+
+5. 동의를 거부할 권리
+   - 위 개인정보 제3자 제공에 대한 동의를 거부할 권리가 있습니다.
+   - 동의 거부 시 이메일 발송 서비스를 이용할 수 없습니다.`
+                    };
+                case 'marketing':
+                    return {
+                        title: '마케팅 정보 수신 동의',
+                        content: `
+1. 수신 정보
+   - 뉴웨이즈 교육 프로그램 안내
+   - 정치 관련 뉴스레터 및 콘텐츠
+   - 이벤트 및 세미나 초대
+   - 정치인 네트워킹 행사 안내
+
+2. 발송 방법
+   - 이메일, SMS, 카카오톡 알림톡
+
+3. 수신 동의 철회
+   - 언제든지 수신 동의를 철회할 수 있습니다.
+   - 이메일 하단의 '수신거부' 링크 클릭
+   - 고객센터 문의
+
+4. 동의를 거부할 권리
+   - 마케팅 정보 수신은 선택사항입니다.
+   - 동의하지 않아도 서비스 이용에 제한이 없습니다.`
+                    };
+                default:
+                    return { title: '', content: '' };
+            }
+        };
+        
+        const { title, content } = getPrivacyContent();
+        
+        return (
+            <div className="modal-overlay" onClick={() => setShowPrivacyModal(false)}>
+                <div className="modal-content privacy-modal" onClick={(e) => e.stopPropagation()}>
+                    <h2 className="modal-title">{title}</h2>
+                    <div className="privacy-content">
+                        <pre>{content}</pre>
+                    </div>
+                    <button className="modal-close-btn" onClick={() => setShowPrivacyModal(false)}>
+                        확인
+                    </button>
+                </div>
+            </div>
+        );
+    };
+
     return (
         <div className="container">
             {currentScreen === 'start' && renderStartScreen()}
             {currentScreen === 'quiz' && renderQuiz()}
             {currentScreen === 'result' && renderResult()}
             {showInfoModal && renderInfoModal()}
+            {renderPrivacyModal()}
         </div>
     );
 }

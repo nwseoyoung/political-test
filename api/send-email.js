@@ -32,6 +32,8 @@ export default async function handler(req, res) {
         user_name,
         user_email,
         user_phone,
+        candidate_intention,
+        marketing_agree,
         test_date,
         total_score,
         self_score,
@@ -75,6 +77,8 @@ export default async function handler(req, res) {
                             local_score: local_score.toString(),
                             party_score: party_score.toString(),
                             personality_type: personality_type,
+                            candidate_intention: candidate_intention,
+                            marketing_agree: marketing_agree,
                             selected_self: selected_self,
                             selected_local: selected_local,
                             selected_party: selected_party
