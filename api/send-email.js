@@ -85,6 +85,7 @@ export default async function handler(req, res) {
         requestBody.subscribers[0].candidate_intention = candidate_intention || '';
         requestBody.subscribers[0].marketing_agree = marketing_agree || 'N';
         requestBody.subscribers[0].selected_items = selected_items || '';
+        requestBody.subscribers[0].user_phone = user_phone || '';  // 구독자 정보에만 저장
 
         console.log('Request body:', JSON.stringify(requestBody, null, 2));
 
