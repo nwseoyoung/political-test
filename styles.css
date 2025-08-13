@@ -842,6 +842,27 @@ body {
     line-height: 1.6;
 }
 
+.scroll-indicator {
+    display: none;
+    justify-content: center;
+    gap: 6px;
+    margin: 15px 0 10px;
+}
+
+.scroll-indicator .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ddd;
+    transition: all 0.3s;
+}
+
+.scroll-indicator .dot.active {
+    background: #DAE000;
+    width: 20px;
+    border-radius: 4px;
+}
+
 .candidate-dropdown-section {
     margin-top: 15px;
 }
@@ -1067,12 +1088,34 @@ body {
     }
     
     .competency-cards {
-        flex-direction: column;
+        flex-direction: row;
         gap: 10px;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        margin: 0 -15px;
+        padding: 0 15px;
+    }
+    
+    .competency-cards::-webkit-scrollbar {
+        height: 4px;
+    }
+    
+    .competency-cards::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+    
+    .competency-cards::-webkit-scrollbar-thumb {
+        background: #DAE000;
+        border-radius: 10px;
     }
     
     .competency-card-start {
         padding: 15px;
+        min-width: 85%;
+        scroll-snap-align: center;
+        flex-shrink: 0;
     }
     
     .competency-icon {
@@ -1086,6 +1129,10 @@ body {
     
     .competency-subdesc {
         font-size: 0.9rem;
+    }
+    
+    .scroll-indicator {
+        display: flex;
     }
     
     .candidate-dropdown-section {

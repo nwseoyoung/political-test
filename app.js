@@ -443,6 +443,11 @@ function App() {
                             <span className="competency-desc">정당 이해, 활동 경험</span>
                         </div>
                     </div>
+                    <div className="scroll-indicator">
+                        <span className="dot active"></span>
+                        <span className="dot"></span>
+                        <span className="dot"></span>
+                    </div>
                     <p className="competency-subdesc">
                         각 영역별로 현재 보유한 역량을 체크하고,<br/>
                         부족한 부분을 파악해 체계적으로 준비할 수 있습니다.
