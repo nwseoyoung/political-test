@@ -948,9 +948,7 @@ function App() {
 
                 <div className="share-link-section">
                     <button className="share-link-btn" onClick={() => {
-                        const strengthMsg = getStrongSubcategories();
-                        const weakMsg = getWeakSubcategories();
-                        const text = `정치인 역량 테스트 결과: ${totalScore}/52점\n${strengthMsg ? strengthMsg + '\n' : ''}${weakMsg}\n\n테스트 하러가기: https://newways.kr/ready-to-test`;
+                        const text = 'https://newways.kr/ready-to-test';
                         navigator.clipboard.writeText(text);
                         alert('링크가 복사되었습니다!');
                     }}>
