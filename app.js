@@ -106,7 +106,17 @@ function App() {
 
     const handleNext = () => {
         // 현재 선택사항을 전체 선택사항에 저장
-        const updatedAll = { ...allSelectedDetails, ...selectedDetails };
+        const updatedAll = { ...allSelectedDetails };
+        // 현재 질문의 모든 항목을 먼저 제거
+        baseQuestions[currentBaseQuestion].detailQuestions.forEach(detailQ => {
+            delete updatedAll[detailQ.id];
+        });
+        // 그다음 현재 선택한 항목만 추가
+        Object.keys(selectedDetails).forEach(key => {
+            if (selectedDetails[key]) {
+                updatedAll[key] = true;
+            }
+        });
         setAllSelectedDetails(updatedAll);
         
         if (currentBaseQuestion < baseQuestions.length - 1) {
@@ -121,7 +131,17 @@ function App() {
     const handlePrevious = () => {
         if (currentBaseQuestion > 0) {
             // 현재 선택사항을 전체 선택사항에 저장
-            const updatedAll = { ...allSelectedDetails, ...selectedDetails };
+            const updatedAll = { ...allSelectedDetails };
+            // 현재 질문의 모든 항목을 먼저 제거
+            baseQuestions[currentBaseQuestion].detailQuestions.forEach(detailQ => {
+                delete updatedAll[detailQ.id];
+            });
+            // 그다음 현재 선택한 항목만 추가
+            Object.keys(selectedDetails).forEach(key => {
+                if (selectedDetails[key]) {
+                    updatedAll[key] = true;
+                }
+            });
             setAllSelectedDetails(updatedAll);
             
             // 이전 페이지로 이동
@@ -417,27 +437,24 @@ function App() {
                 <p className="start-subtitle">나는 지금 얼마나 준비됐을까?</p>
                 <h1 className="start-title">정치인 역량 테스트</h1>
                 <p className="start-description">
-                    전현직 젊치인의 자문을 받아 구성한 정치인 역량 테스트로 체크해 보세요.
-                    어떤 역량을 키워야 할지 스스로 목표를 세울 수 있어요.
+                    전현직 젊치인과 함께 만든<br/>
+                    정치인 역량 테스트로 나만의 성장 경로를 세워보세요.
                 </p>
                 
                 <div className="competency-highlight">
-                    <h2 className="competency-title">🎯 총 52개 항목을 체크해보세요</h2>
+                    <h2 className="competency-title">총 52개 항목을 체크해보세요</h2>
                     <div className="competency-cards">
                         <div className="competency-card-start">
-                            <div className="competency-icon">💪</div>
                             <h3>자기 역량</h3>
                             <p className="competency-count">18개 항목</p>
                             <span className="competency-desc">리더십, 전문성, 영향력</span>
                         </div>
                         <div className="competency-card-start">
-                            <div className="competency-icon">🏛️</div>
                             <h3>지역 활동</h3>
                             <p className="competency-count">19개 항목</p>
                             <span className="competency-desc">지역 이해도, 네트워크</span>
                         </div>
                         <div className="competency-card-start">
-                            <div className="competency-icon">🤝</div>
                             <h3>정당 활동</h3>
                             <p className="competency-count">15개 항목</p>
                             <span className="competency-desc">정당 이해, 활동 경험</span>
@@ -495,64 +512,34 @@ function App() {
                         </select>
                     </div>
                     
-                    <div className="privacy-section">
-                        <div className="privacy-item required">
-                            <label className="checkbox-label">
+                    <div className="privacy-section-compact">
+                        <div className="privacy-row">
+                            <label className="checkbox-label-compact">
                                 <input
                                     type="checkbox"
-                                    checked={privacyAgree}
-                                    onChange={(e) => setPrivacyAgree(e.target.checked)}
+                                    checked={privacyAgree && thirdPartyAgree}
+                                    onChange={(e) => {
+                                        setPrivacyAgree(e.target.checked);
+                                        setThirdPartyAgree(e.target.checked);
+                                    }}
                                 />
-                                <span>(필수) 개인정보 수집·이용에 동의합니다</span>
+                                <span className="privacy-text">
+                                    (필수) <a href="#" onClick={(e) => {e.preventDefault(); setShowPrivacyModal('privacy');}}>개인정보 수집·이용</a> 및 <a href="#" onClick={(e) => {e.preventDefault(); setShowPrivacyModal('thirdParty');}}>제3자 제공</a>에 동의합니다
+                                </span>
                             </label>
-                            <button className="privacy-detail-btn" onClick={() => setShowPrivacyModal('privacy')}>
-                                자세히
-                            </button>
-                        </div>
-                        
-                        <div className="privacy-item required">
-                            <label className="checkbox-label">
-                                <input
-                                    type="checkbox"
-                                    checked={thirdPartyAgree}
-                                    onChange={(e) => setThirdPartyAgree(e.target.checked)}
-                                />
-                                <span>(필수) 개인정보 제3자 제공에 동의합니다</span>
-                            </label>
-                            <button className="privacy-detail-btn" onClick={() => setShowPrivacyModal('thirdParty')}>
-                                자세히
-                            </button>
-                        </div>
-                        
-                        <div className="privacy-item">
-                            <label className="checkbox-label">
+                            
+                            <label className="checkbox-label-compact">
                                 <input
                                     type="checkbox"
                                     checked={marketingAgree}
                                     onChange={(e) => setMarketingAgree(e.target.checked)}
                                 />
-                                <span>(선택) 마케팅 정보 수신에 동의합니다</span>
-                            </label>
-                            <button className="privacy-detail-btn" onClick={() => setShowPrivacyModal('marketing')}>
-                                자세히
-                            </button>
-                        </div>
-                        
-                        <div className="privacy-all">
-                            <label className="checkbox-label">
-                                <input
-                                    type="checkbox"
-                                    checked={privacyAgree && thirdPartyAgree && marketingAgree}
-                                    onChange={(e) => {
-                                        const checked = e.target.checked;
-                                        setPrivacyAgree(checked);
-                                        setThirdPartyAgree(checked);
-                                        setMarketingAgree(checked);
-                                    }}
-                                />
-                                <span>전체 동의</span>
+                                <span className="privacy-text">(선택) 마케팅 정보 수신 동의</span>
                             </label>
                         </div>
+                        <p className="privacy-notice">
+                            마케팅 수신 동의를 해야 이메일로 진단 결과와 자기경쟁력 워크시트를 보내드려요.
+                        </p>
                     </div>
                 </div>
 
@@ -627,73 +614,71 @@ function App() {
         );
     };
 
-    const getPersonalityType = () => {
+    const getWeakestCategory = () => {
         const selfScore = getCategoryScore('자기 역량');
         const localScore = getCategoryScore('지역 활동');
         const partyScore = getCategoryScore('정당 활동');
         
-        const selfHigh = selfScore >= 9;
-        const localHigh = localScore >= 10;
-        const partyHigh = partyScore >= 8;
+        // 세부 카테고리별 점수 계산
+        const subcategoryScores = {};
+        baseQuestions.forEach(baseQ => {
+            if (!subcategoryScores[baseQ.subcategory]) {
+                subcategoryScores[baseQ.subcategory] = 0;
+            }
+            baseQ.detailQuestions.forEach(detailQ => {
+                if (allSelectedDetails[detailQ.id]) {
+                    subcategoryScores[baseQ.subcategory]++;
+                }
+            });
+        });
         
-        // 유형 판정 로직
-        if (selfHigh && localHigh && partyHigh) {
-            return {
-                type: '출마 준비를 마쳤습니다',
-                icon: '🏆',
-                message: '모든 역량이 준비되었습니다! 출마를 고려해보세요.',
-                color: '#DAE000'
-            };
-        } else if (selfHigh && !localHigh && partyHigh) {
-            return {
-                type: '비례 영입인재',
-                icon: '⚖️',
-                message: '정당활동은 부족하지만 전문성이 뛰어납니다.',
-                color: '#DAE000'
-            };
-        } else if (selfHigh && localHigh && !partyHigh) {
-            return {
-                type: '지역 영입인재',
-                icon: '🏘️',
-                message: '정당활동은 부족하지만 역량이 우수합니다.',
-                color: '#DAE000'
-            };
-        } else if (selfHigh && !localHigh && !partyHigh) {
-            return {
-                type: '당 리더십, 청년위원장형 인재',
-                icon: '🎯',
-                message: '정당 내 활동에 강점이 있습니다.',
-                color: '#DAE000'
-            };
-        } else if (!selfHigh && !localHigh && partyHigh) {
-            return {
-                type: '정당활동만 치우친 유형',
-                icon: '⚠️',
-                message: '더 많은 준비가 필요합니다. 본인만의 전문 역량을 길러보세요.',
-                color: '#FFA500'
-            };
-        } else if (!selfHigh && localHigh && !partyHigh) {
-            return {
-                type: '선택과 집중, 리더십 만들기',
-                icon: '🎪',
-                message: '리더십, 전문성 등 특정 영역에 집중해 역량을 키워보세요.',
-                color: '#87CEEB'
-            };
-        } else if (!selfHigh && !localHigh && !partyHigh) {
-            return {
-                type: '자기역량부터 만들기',
-                icon: '🌱',
-                message: '나만의 전문성부터 차근차근 쌓아가세요.',
-                color: '#9370DB'
-            };
-        } else {
-            return {
-                type: '선택과 집중, 전문성 만들기',
-                icon: '📚',
-                message: '리더십, 전문성 등 특정 영역에 집중해 역량을 키워보세요.',
-                color: '#87CEEB'
-            };
-        }
+        // 가장 낮은 점수의 카테고리 찾기
+        let weakestCategory = '';
+        let weakestSubcategory = '';
+        let lowestScore = Infinity;
+        
+        const categories = [
+            { name: '자기 역량', score: selfScore, max: 18 },
+            { name: '지역 활동', score: localScore, max: 19 },
+            { name: '정당 활동', score: partyScore, max: 15 }
+        ];
+        
+        categories.forEach(cat => {
+            const percentage = (cat.score / cat.max) * 100;
+            if (percentage < lowestScore) {
+                lowestScore = percentage;
+                weakestCategory = cat.name;
+            }
+        });
+        
+        // 해당 카테고리의 가장 약한 세부 카테고리 찾기
+        let minSubScore = Infinity;
+        baseQuestions.forEach(baseQ => {
+            if (baseQ.category === weakestCategory) {
+                const subScore = subcategoryScores[baseQ.subcategory] || 0;
+                if (subScore < minSubScore) {
+                    minSubScore = subScore;
+                    weakestSubcategory = baseQ.subcategory;
+                }
+            }
+        });
+        
+        return {
+            category: weakestCategory,
+            subcategory: weakestSubcategory,
+            message: `${weakestCategory} 중에서도 특히 ${weakestSubcategory} 역량을 보완하면 좋겠어요.`
+        };
+    };
+    
+    const getPersonalityType = () => {
+        const weak = getWeakestCategory();
+        
+        return {
+            type: weak.category + ' 보완 필요',
+            icon: '',
+            message: weak.message,
+            color: '#333'
+        };
     };
 
     const renderResult = () => {
@@ -710,16 +695,12 @@ function App() {
             <div className="result-screen">
                 <div className="result-header">
                     <img src="images/mate-character-1.png" alt="뉴웨이즈 메이트" className="mate-character-result" />
-                    <div className="personality-type" style={{marginTop: '20px', marginBottom: '30px'}}>
-                        <div className="type-icon" style={{fontSize: '3rem', marginBottom: '15px'}}>{personalityType.icon}</div>
-                        <h2 className="type-title" style={{fontSize: '1.8rem', fontWeight: '700', color: personalityType.color, marginBottom: '10px'}}>
-                            {personalityType.type}
-                        </h2>
-                        <p className="type-message" style={{fontSize: '1.1rem', opacity: '0.9', lineHeight: '1.6'}}>
+                    <div className="total-score">{totalScore}/52</div>
+                    <div className="personality-feedback">
+                        <p className="feedback-message">
                             {personalityType.message}
                         </p>
                     </div>
-                    <div className="total-score">{totalScore}/52</div>
                 </div>
 
                 <div className="score-cards">
@@ -746,52 +727,30 @@ function App() {
                     </div>
                 </div>
 
-                <div className="bootcamp-section">
-                    <img src="images/bootcamp-logo.png" alt="뉴웨이즈 부트캠프" className="bootcamp-logo" />
-                    <h3 className="bootcamp-title">정치 역량을 높이고 싶다면?</h3>
-                    <p className="bootcamp-description">
-                        뉴웨이즈 부트캠프에서 체계적인 교육과 멘토링을 통해 
-                        정치 역량을 향상시킬 수 있습니다.
+                <div className="result-info-section">
+                    <p className="result-info-text">
+                        더 자세한 역량 해설과 자기경쟁력을 정리하는 워크시트를<br/>
+                        이메일로 보내드렸어요. 확인해 보세요.
                     </p>
-                    <button className="cta-btn" onClick={() => window.open('https://newways.kr/1daybootcamp?utm_source=homepage&utm_medium=landing&utm_campaign=1daycamp_selfcheck&utm_content=250813', '_blank')}>
-                        부트캠프 자세히 보기
-                    </button>
                 </div>
 
-                <div className="interpretation-section">
-                    <h3 className="interpretation-title">결과 해석 보러가기</h3>
-                    <p className="interpretation-description">
-                        각 영역별 상세한 해설과 개선 방법을 확인해보세요.
+                <div className="bootcamp-section">
+                    <h3 className="bootcamp-title">정치인 역량 강화 실전 전략을 더 알고 싶다면?</h3>
+                    <p className="bootcamp-description">
+                        뉴웨이즈 부트캠프 워크숍을 신청해 보세요.
                     </p>
-                    <div className="interpretation-links">
-                        <button 
-                            className="interpretation-btn" 
-                            onClick={() => handleInterpretationClick('https://newways.kr/article/self-competency')}
-                        >
-                            자기 역량 해설 보기
-                        </button>
-                        <button 
-                            className="interpretation-btn" 
-                            onClick={() => handleInterpretationClick('https://newways.kr/article/local-activity')}
-                        >
-                            지역 활동 역량 해설 보기
-                        </button>
-                        <button 
-                            className="interpretation-btn" 
-                            onClick={() => handleInterpretationClick('https://newways.kr/article/party-activity')}
-                        >
-                            정당 활동 역량 해설 보기
-                        </button>
-                    </div>
+                    <button className="cta-btn" onClick={() => window.open('https://newways.kr/1daybootcamp?utm_source=homepage&utm_medium=landing&utm_campaign=1daycamp_selfcheck&utm_content=250813', '_blank')}>
+                        부트캠프 신청하기
+                    </button>
                 </div>
 
                 <div className="share-link-section">
                     <button className="share-link-btn" onClick={() => {
-                        const text = `정치인 역량 테스트 결과: ${personalityType.type}\n${personalityType.message}\n\n테스트 하러가기: ${window.location.href}`;
+                        const text = `정치인 역량 테스트 결과: ${totalScore}/52점\n${personalityType.message}\n\n테스트 하러가기: ${window.location.href}`;
                         navigator.clipboard.writeText(text);
                         alert('링크가 복사되었습니다!');
                     }}>
-                        🔗 결과 링크 복사하기
+                        진단 테스트 공유하기
                     </button>
                 </div>
             </div>
