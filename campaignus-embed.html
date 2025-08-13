@@ -27,7 +27,7 @@
 </div>
 
 <script>
-// iframe 높이 자동 조절 스크립트
+// iframe 높이 자동 조절 및 스크롤 제어
 (function() {
     var iframe = document.querySelector('#political-test-widget iframe');
     if (iframe) {
@@ -40,8 +40,19 @@
         adjustHeight();
         window.addEventListener('resize', adjustHeight);
         
-        // 부드러운 스크롤 설정
-        iframe.style.scrollBehavior = 'smooth';
+        // iframe으로부터 메시지 수신 (스크롤 제어)
+        window.addEventListener('message', function(e) {
+            if (e.data && e.data.type === 'scrollToTop') {
+                window.scrollTo(0, 0);
+                document.body.scrollTop = 0;
+                document.documentElement.scrollTop = 0;
+            }
+        });
+        
+        // iframe 로드 시 상단으로 스크롤
+        iframe.onload = function() {
+            window.scrollTo(0, 0);
+        };
     }
 })();
 </script>
