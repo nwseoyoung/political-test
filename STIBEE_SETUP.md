@@ -1,0 +1,78 @@
+# 스티비 커스텀 필드 설정 가이드
+
+## 필요한 커스텀 필드 목록
+
+스티비 관리자에서 다음 커스텀 필드를 생성해야 합니다:
+
+### 1. 스티비 관리자 접속
+- https://www.stibee.com 로그인
+- 리스트 관리 페이지로 이동
+
+### 2. 커스텀 필드 생성
+구독자 > 사용자 정의 필드에서 다음 필드들을 생성:
+
+| 필드 이름 (표시명) | 필드 키 (API 키) | 필드 타입 |
+|------------------|-----------------|----------|
+| 테스트 날짜 | test_date | 텍스트 |
+| 전체 점수 | total_score | 텍스트 |
+| 자기역량 점수 | self_score | 텍스트 |
+| 지역활동 점수 | local_score | 텍스트 |
+| 정당활동 점수 | party_score | 텍스트 |
+| 약점 메시지 | weakness_message | 텍스트 |
+| 강점 메시지 | strength_message | 텍스트 |
+| 출마 의향 | candidate_intention | 텍스트 |
+| 마케팅 동의 | marketing_agree | 텍스트 |
+
+### 3. 필드 키 확인 방법
+- 각 필드 생성 시 "필드 키"는 위 표의 API 키와 **정확히 일치**해야 함
+- 띄어쓰기나 대소문자 구분 주의
+
+### 4. Vercel 환경 변수 설정
+Vercel 대시보드에서 다음 환경 변수 확인:
+- `STIBEE_API_KEY`: 스티비 API 액세스 토큰
+- `STIBEE_LIST_ID`: 리스트 ID (숫자)
+
+### 5. 이메일 템플릿 설정
+스티비 자동 이메일에서 커스텀 필드 사용:
+```
+{{test_date}}
+{{total_score}}
+{{self_score}}
+{{local_score}}
+{{party_score}}
+{{weakness_message}}
+{{strength_message}}
+{{candidate_intention}}
+{{marketing_agree}}
+```
+
+## 문제 해결
+
+### 커스텀 필드가 전달되지 않는 경우:
+
+1. **필드 키 확인**
+   - 스티비에서 생성한 필드 키가 정확한지 확인
+   - 대소문자, 언더스코어 확인
+
+2. **API 응답 확인**
+   - Vercel Functions 로그에서 응답 확인
+   - 에러 메시지 확인
+
+3. **스티비 Pro 요금제 확인**
+   - 커스텀 필드는 Pro 이상 요금제에서만 사용 가능
+
+4. **테스트 방법**
+   - 테스트 이메일로 전송 후 스티비 구독자 목록에서 확인
+   - 구독자 상세 페이지에서 커스텀 필드 값 확인
+
+## 디버깅 팁
+
+Vercel 함수 로그 확인:
+1. Vercel 대시보드 > Functions 탭
+2. send-email 함수 선택
+3. Logs 확인
+
+로그에서 확인할 내용:
+- "Custom fields being sent:" 로그 확인
+- "Request body:" 로그 확인
+- 에러 메시지 확인

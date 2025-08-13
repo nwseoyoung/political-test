@@ -51,9 +51,41 @@ export default async function handler(req, res) {
     console.log('Received email request for:', user_email);
     console.log('API Key exists:', !!STIBEE_API_KEY);
     console.log('List ID:', STIBEE_LIST_ID);
+    console.log('Custom fields being sent:', {
+        test_date,
+        total_score,
+        self_score,
+        local_score,
+        party_score,
+        weakness_message: weakness_message ? weakness_message.substring(0, 50) + '...' : '',
+        strength_message: strength_message ? strength_message.substring(0, 50) + '...' : '',
+        candidate_intention,
+        marketing_agree
+    });
     
     try {
         // 1. 구독자 추가/업데이트
+        const requestBody = {
+            subscribers: [{
+                email: user_email,
+                name: user_name || '',
+                phone: user_phone || ''
+            }]
+        };
+
+        // 커스텀 필드를 구독자 객체의 최상위 레벨에 추가
+        requestBody.subscribers[0].test_date = test_date || '';
+        requestBody.subscribers[0].total_score = total_score ? total_score.toString() : '0';
+        requestBody.subscribers[0].self_score = self_score ? self_score.toString() : '0';
+        requestBody.subscribers[0].local_score = local_score ? local_score.toString() : '0';
+        requestBody.subscribers[0].party_score = party_score ? party_score.toString() : '0';
+        requestBody.subscribers[0].weakness_message = weakness_message || '';
+        requestBody.subscribers[0].strength_message = strength_message || '';
+        requestBody.subscribers[0].candidate_intention = candidate_intention || '';
+        requestBody.subscribers[0].marketing_agree = marketing_agree || 'N';
+
+        console.log('Request body:', JSON.stringify(requestBody, null, 2));
+
         const subscriberResponse = await fetch(
             `https://api.stibee.com/v1/lists/${STIBEE_LIST_ID}/subscribers`,
             {
@@ -62,26 +94,7 @@ export default async function handler(req, res) {
                     'AccessToken': STIBEE_API_KEY,
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    subscribers: [{
-                        email: user_email,
-                        name: user_name,
-                        phone: user_phone,
-                        // 커스텀 필드 (스티비에서 미리 생성 필요)
-                        customFields: {
-                            test_date: test_date,
-                            total_score: total_score ? total_score.toString() : '0',
-                            self_score: self_score ? self_score.toString() : '0',
-                            local_score: local_score ? local_score.toString() : '0',
-                            party_score: party_score ? party_score.toString() : '0',
-                            weakness_message: weakness_message || '',
-                            strength_message: strength_message || '',
-                            candidate_intention: candidate_intention || '',
-                            marketing_agree: marketing_agree || 'N',
-                            selected_items: selected_items ? JSON.stringify(selected_items) : '{}'
-                        }
-                    }]
-                })
+                body: JSON.stringify(requestBody)
             }
         );
         
