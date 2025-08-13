@@ -80,8 +80,8 @@ export default async function handler(req, res) {
         requestBody.subscribers[0].self_score = self_score ? self_score.toString() : '0';
         requestBody.subscribers[0].local_score = local_score ? local_score.toString() : '0';
         requestBody.subscribers[0].party_score = party_score ? party_score.toString() : '0';
-        requestBody.subscribers[0].weakness_message = weakness_message || '';
-        requestBody.subscribers[0].strength_message = strength_message || '';
+        requestBody.subscribers[0].weakness_message = weakness_message || '역량을 더 강화할 수 있는 부분이 있습니다.';
+        requestBody.subscribers[0].strength_message = strength_message || '강점 역량을 계속 발전시켜 나가세요.';
         requestBody.subscribers[0].candidate_intention = candidate_intention || '';
         requestBody.subscribers[0].marketing_agree = marketing_agree || 'N';
         requestBody.subscribers[0].selected_items = selected_items || '';
