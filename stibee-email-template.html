@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>정치 역량 진단 결과</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background-color: #f5f5f5;">
+    <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff;">
+        <!-- 헤더 -->
+        <div style="background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%); padding: 40px 30px; text-align: center;">
+            <h1 style="color: #DAE000; margin: 0; font-size: 28px; font-weight: 800;">정치 역량 진단 결과</h1>
+            <p style="color: #ffffff; margin-top: 10px; font-size: 16px; opacity: 0.9;">{{name}}님의 상세 진단 결과입니다</p>
+        </div>
+
+        <!-- 테스트 정보 -->
+        <div style="padding: 30px; border-bottom: 1px solid #e0e0e0;">
+            <h2 style="color: #1a1a1a; font-size: 20px; margin-bottom: 20px;">📋 기본 정보</h2>
+            <table style="width: 100%; border-collapse: collapse;">
+                <tr>
+                    <td style="padding: 10px 0; color: #666; width: 120px;">이름</td>
+                    <td style="padding: 10px 0; color: #1a1a1a; font-weight: 600;">{{name}}</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px 0; color: #666;">이메일</td>
+                    <td style="padding: 10px 0; color: #1a1a1a;">{{email}}</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px 0; color: #666;">진단 날짜</td>
+                    <td style="padding: 10px 0; color: #1a1a1a;">{{test_date}}</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px 0; color: #666;">출마 의향</td>
+                    <td style="padding: 10px 0; color: #1a1a1a;">{{candidate_intention}}</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- 점수 카드 -->
+        <div style="padding: 30px; background-color: #f8f9fa;">
+            <h2 style="color: #1a1a1a; font-size: 20px; margin-bottom: 25px;">📊 역량 점수</h2>
+            
+            <!-- 전체 점수 -->
+            <div style="background: linear-gradient(135deg, #DAE000 0%, #c5cc00 100%); border-radius: 12px; padding: 25px; margin-bottom: 20px; text-align: center;">
+                <p style="color: #1a1a1a; margin: 0; font-size: 14px; opacity: 0.8;">전체 점수</p>
+                <p style="color: #1a1a1a; margin: 5px 0 0 0; font-size: 36px; font-weight: 800;">{{total_score}}/52점</p>
+            </div>
+
+            <!-- 세부 점수 -->
+            <div style="display: table; width: 100%; table-layout: fixed; border-spacing: 10px;">
+                <div style="display: table-cell; background: white; border-radius: 10px; padding: 20px; text-align: center; border: 1.5px solid #e0e0e0;">
+                    <p style="color: #666; margin: 0; font-size: 14px;">자기 역량</p>
+                    <p style="color: #1a1a1a; margin: 8px 0 0 0; font-size: 24px; font-weight: 700;">{{self_score}}점</p>
+                </div>
+                <div style="display: table-cell; background: white; border-radius: 10px; padding: 20px; text-align: center; border: 1.5px solid #e0e0e0;">
+                    <p style="color: #666; margin: 0; font-size: 14px;">지역 활동</p>
+                    <p style="color: #1a1a1a; margin: 8px 0 0 0; font-size: 24px; font-weight: 700;">{{local_score}}점</p>
+                </div>
+                <div style="display: table-cell; background: white; border-radius: 10px; padding: 20px; text-align: center; border: 1.5px solid #e0e0e0;">
+                    <p style="color: #666; margin: 0; font-size: 14px;">정당 활동</p>
+                    <p style="color: #1a1a1a; margin: 8px 0 0 0; font-size: 24px; font-weight: 700;">{{party_score}}점</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 강점 분석 -->
+        {{#if strength_message}}
+        <div style="padding: 30px; border-bottom: 1px solid #e0e0e0;">
+            <h2 style="color: #1a1a1a; font-size: 20px; margin-bottom: 20px;">✨ 강점 역량</h2>
+            <div style="background: #f0fdf4; border-left: 4px solid #22c55e; padding: 20px; border-radius: 8px;">
+                <p style="color: #1a1a1a; margin: 0; line-height: 1.8; white-space: pre-wrap;">{{strength_message}}</p>
+            </div>
+        </div>
+        {{/if}}
+
+        <!-- 약점 분석 -->
+        <div style="padding: 30px; border-bottom: 1px solid #e0e0e0;">
+            <h2 style="color: #1a1a1a; font-size: 20px; margin-bottom: 20px;">📈 개선이 필요한 역량</h2>
+            <div style="background: #fef2f2; border-left: 4px solid #ef4444; padding: 20px; border-radius: 8px;">
+                <p style="color: #1a1a1a; margin: 0; line-height: 1.8; white-space: pre-wrap;">{{weakness_message}}</p>
+            </div>
+        </div>
+
+        <!-- 선택한 문항 -->
+        <div style="padding: 30px; background-color: #f8f9fa;">
+            <h2 style="color: #1a1a1a; font-size: 20px; margin-bottom: 20px;">📝 선택한 문항 상세</h2>
+            <div style="background: white; padding: 20px; border-radius: 8px; border: 1px solid #e0e0e0;">
+                <pre style="color: #1a1a1a; margin: 0; line-height: 1.8; font-family: 'Pretendard', sans-serif; white-space: pre-wrap; font-size: 14px;">{{selected_items}}</pre>
+            </div>
+        </div>
+
+        <!-- 해설지 섹션 -->
+        <div style="padding: 40px 30px; background-color: #ffffff; text-align: center; border-bottom: 1px solid #e0e0e0;">
+            <h2 style="color: #1a1a1a; font-size: 24px; margin-bottom: 15px; font-weight: 800;">📖 정치인 역량 테스트 결과 해설지</h2>
+            <p style="color: #666; margin-bottom: 25px; line-height: 1.6; font-size: 16px;">
+                각 문항과 역량이 왜 중요한지 해설을 살펴보며<br>
+                어떻게 역량과 경험을 쌓아야 하는지 계획을 세워보세요.
+            </p>
+            <a href="https://newwayskr.notion.site/249441828a8280c58a57c9d75b8cd1d3" style="display: inline-block; background: #1a1a1a; color: #ffffff; padding: 16px 40px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 16px;">
+                해설지 보기
+            </a>
+        </div>
+
+        <!-- CTA 섹션 -->
+        <div style="padding: 40px 30px; background: linear-gradient(135deg, #DAE000 0%, #c5cc00 100%); text-align: center;">
+            <h2 style="color: #1a1a1a; font-size: 24px; margin-bottom: 15px; font-weight: 800;">🚀 뉴웨이즈 부트캠프에서 더 상세한 해설을 들어보세요.</h2>
+            <p style="color: #1a1a1a; margin-bottom: 25px; line-height: 1.6; font-size: 16px;">
+                하루만에 선거에서 당선 가능성을 높이는<br>
+                실전 전략을 배울 수 있어요.
+            </p>
+            <a href="https://newways.kr/1daybootcamp?utm_source=homepage&utm_medium=email&utm_campaign=1daycamp_selfcheck&utm_content=250813" style="display: inline-block; background: #1a1a1a; color: #DAE000; padding: 16px 40px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 16px;">
+                부트캠프 신청하기
+            </a>
+        </div>
+
+        <!-- 추가 링크 -->
+        <div style="padding: 30px; background-color: #2a2a2a; text-align: center;">
+            <p style="color: #ffffff; margin-bottom: 20px; font-size: 16px;">더 자세한 해석이 필요하신가요?</p>
+            <div style="margin-bottom: 15px;">
+                <a href="https://newways.kr/consulting" style="display: inline-block; background: transparent; color: #DAE000; padding: 12px 30px; border: 2px solid #DAE000; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 14px;">
+                    1:1 컨설팅 신청
+                </a>
+            </div>
+            <div>
+                <a href="https://newways.kr/ready-to-test" style="display: inline-block; background: transparent; color: #ffffff; padding: 12px 30px; border: 2px solid #ffffff; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 14px;">
+                    다시 테스트하기
+                </a>
+            </div>
+        </div>
+
+        <!-- 푸터 -->
+        <div style="padding: 20px 30px; background-color: #1a1a1a; text-align: center;">
+            <p style="color: #999; margin: 0; font-size: 12px; line-height: 1.6;">
+                본 메일은 정치 역량 진단 테스트 결과를 요청하신 분께 발송되었습니다.<br>
+                문의: contact@newways.kr | 홈페이지: newways.kr
+            </p>
+            <p style="color: #666; margin: 10px 0 0 0; font-size: 11px;">
+                © 2024 뉴웨이즈. All rights reserved.
+            </p>
+        </div>
+    </div>
+</body>
+</html>
