@@ -120,9 +120,25 @@ function App() {
         setAllSelectedDetails(updatedAll);
         
         if (currentBaseQuestion < baseQuestions.length - 1) {
-            setCurrentBaseQuestion(currentBaseQuestion + 1);
-            setSelectedDetails({});
-            setHasSelectedNone(false);
+            const nextQuestion = currentBaseQuestion + 1;
+            setCurrentBaseQuestion(nextQuestion);
+            
+            // 다음 페이지의 저장된 선택사항 복원
+            const nextQuestionDetails = {};
+            let hasNone = false;
+            baseQuestions[nextQuestion].detailQuestions.forEach(detailQ => {
+                if (updatedAll[detailQ.id]) {
+                    nextQuestionDetails[detailQ.id] = true;
+                }
+            });
+            
+            // 선택된 항목이 없으면 "해당항목 없음"이 선택된 것
+            if (Object.keys(nextQuestionDetails).length === 0) {
+                hasNone = true;
+            }
+            
+            setSelectedDetails(nextQuestionDetails);
+            setHasSelectedNone(hasNone);
         } else {
             calculateResults();
         }
@@ -731,7 +747,7 @@ function App() {
             parts.push(`${cat}(${byCategory[cat].join(', ')})`);
         });
         
-        return '보완이 필요한 역량: ' + parts.join(', ');
+        return parts.join(', ') + ' 역량 보완이 필요해요.';
     };
     
 
@@ -780,12 +796,9 @@ function App() {
                     <p className="feedback-message">
                         {getWeakSubcategories()}
                     </p>
-                </div>
-
-                <div className="result-info-section">
-                    <p className="result-info-text">
+                    <p className="email-notice">
                         더 자세한 역량 해설을 이메일로 보내드렸어요.<br/>
-                        확인해 보세요.
+                        바로 확인해 보세요.
                     </p>
                 </div>
 
@@ -807,6 +820,14 @@ function App() {
                     }}>
                         진단 테스트 공유하기
                     </button>
+                </div>
+                
+                <div className="copyright-section">
+                    <p className="copyright-text">
+                        ⓒ 2025. 사단법인 뉴웨이즈(NEWWAYS) All rights reserved.<br/>
+                        뉴웨이즈 정치인 역량 테스트는 뉴웨이즈에 저작권이 있습니다.<br/>
+                        저작권법에 의거 무단 전재 및 재배포를 금지합니다.
+                    </p>
                 </div>
             </div>
         );
