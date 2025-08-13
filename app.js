@@ -930,14 +930,16 @@ function App() {
                     <p className="feedback-message">
                         {getWeakSubcategories()}
                     </p>
-                    <p className="email-notice">
-                        더 자세한 역량 해설을 이메일로 보내드렸어요.<br/>
-                        바로 확인해 보세요.
-                    </p>
+                    {formData.marketing && (
+                        <p className="email-notice" style={{fontWeight: 'bold'}}>
+                            더 자세한 역량 해설을 이메일로 보냈어요.<br/>
+                            메일함을 확인해 주세요.
+                        </p>
+                    )}
                 </div>
 
                 <div className="bootcamp-section">
-                    <h3 className="bootcamp-title">더 상세한 해설과 노하우를 알고 싶다면?</h3>
+                    <h3 className="bootcamp-title">정치인 준비 실전 전략 더 알고 싶다면?</h3>
                     <p className="bootcamp-description">
                         뉴웨이즈 부트캠프에서는 정치 기초 지식부터 출마 실전 전략까지 하루만에 배울 수 있어요.
                     </p>
@@ -952,7 +954,7 @@ function App() {
                         navigator.clipboard.writeText(text);
                         alert('링크가 복사되었습니다!');
                     }}>
-                        진단 테스트 공유하기
+                        🔗 진단 테스트 공유하기
                     </button>
                 </div>
                 
