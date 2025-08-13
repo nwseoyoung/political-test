@@ -1,0 +1,146 @@
+/* iframe 최적화 전용 스타일 */
+/* 캠페이너스 iframe 내에서 한 화면에 모든 요소가 보이도록 최적화 */
+
+@media (max-width: 768px) {
+    /* 컨테이너 높이 최적화 */
+    .quiz-container {
+        height: 100vh !important;
+        height: 100dvh !important;
+        max-height: -webkit-fill-available !important;
+    }
+    
+    /* 헤더 압축 */
+    .quiz-header-fixed {
+        padding: 6px 10px 4px !important;
+        margin-bottom: 3px !important;
+    }
+    
+    .progress-info {
+        margin-bottom: 5px !important;
+        font-size: 0.8rem !important;
+    }
+    
+    .progress-bar {
+        height: 3px !important;
+        margin-bottom: 5px !important;
+    }
+    
+    .question-header {
+        margin-top: 0 !important;
+        margin-bottom: 3px !important;
+    }
+    
+    .question-text {
+        font-size: 0.88rem !important;
+        margin-bottom: 3px !important;
+        line-height: 1.3 !important;
+    }
+    
+    .question-hint {
+        font-size: 0.7rem !important;
+    }
+    
+    /* 콘텐츠 영역 최적화 */
+    .quiz-content {
+        padding: 0 10px !important;
+        padding-bottom: 60px !important;
+    }
+    
+    .option-list {
+        gap: 2px !important;
+        margin-bottom: 3px !important;
+    }
+    
+    .option-item {
+        padding: 7px 8px !important;
+        margin-bottom: 2px !important;
+        min-height: 34px !important;
+    }
+    
+    .option-text {
+        font-size: 0.78rem !important;
+        line-height: 1.2 !important;
+    }
+    
+    .option-checkbox {
+        width: 18px !important;
+        height: 18px !important;
+    }
+    
+    /* 네비게이션 최적화 */
+    .navigation {
+        padding: 8px 10px !important;
+        gap: 8px !important;
+    }
+    
+    .nav-btn {
+        padding: 10px !important;
+        font-size: 0.82rem !important;
+        border-radius: 8px !important;
+    }
+}
+
+/* 태블릿 및 중간 화면 */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .quiz-container {
+        height: 100vh !important;
+    }
+    
+    .quiz-header-fixed {
+        padding: 10px 15px 8px !important;
+    }
+    
+    .quiz-content {
+        padding-bottom: 80px !important;
+    }
+    
+    .option-item {
+        padding: 10px 12px !important;
+        margin-bottom: 4px !important;
+    }
+    
+    .navigation {
+        padding: 12px 15px !important;
+    }
+    
+    .nav-btn {
+        padding: 13px !important;
+        font-size: 0.92rem !important;
+    }
+}
+
+/* 매우 작은 화면 (SE, 미니 등) */
+@media (max-width: 375px) {
+    .quiz-header-fixed {
+        padding: 5px 8px 3px !important;
+    }
+    
+    .question-text {
+        font-size: 0.85rem !important;
+    }
+    
+    .option-item {
+        padding: 6px 7px !important;
+        min-height: 32px !important;
+    }
+    
+    .option-text {
+        font-size: 0.75rem !important;
+    }
+    
+    .nav-btn {
+        padding: 9px !important;
+        font-size: 0.8rem !important;
+    }
+}
+
+/* iframe 내 스크롤 최적화 */
+body {
+    overflow-x: hidden !important;
+}
+
+.app-container {
+    height: 100vh !important;
+    height: 100dvh !important;
+    overflow: hidden !important;
+}
