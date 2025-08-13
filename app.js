@@ -421,6 +421,34 @@ function App() {
                     어떤 역량을 키워야 할지 스스로 목표를 세울 수 있어요.
                 </p>
                 
+                <div className="competency-highlight">
+                    <h2 className="competency-title">🎯 총 52개 항목을 체크해보세요</h2>
+                    <div className="competency-cards">
+                        <div className="competency-card-start">
+                            <div className="competency-icon">💪</div>
+                            <h3>자기 역량</h3>
+                            <p className="competency-count">18개 항목</p>
+                            <span className="competency-desc">리더십, 전문성, 영향력</span>
+                        </div>
+                        <div className="competency-card-start">
+                            <div className="competency-icon">🏛️</div>
+                            <h3>지역 활동</h3>
+                            <p className="competency-count">19개 항목</p>
+                            <span className="competency-desc">지역 이해도, 네트워크</span>
+                        </div>
+                        <div className="competency-card-start">
+                            <div className="competency-icon">🤝</div>
+                            <h3>정당 활동</h3>
+                            <p className="competency-count">15개 항목</p>
+                            <span className="competency-desc">정당 이해, 활동 경험</span>
+                        </div>
+                    </div>
+                    <p className="competency-subdesc">
+                        각 영역별로 현재 보유한 역량을 체크하고,<br/>
+                        부족한 부분을 파악해 체계적으로 준비할 수 있습니다.
+                    </p>
+                </div>
+                
                 <div className="user-info-section">
                     <p className="info-title">진단 결과를 보내드릴게요</p>
                     <div className="info-form-inline">
@@ -447,50 +475,19 @@ function App() {
                         />
                     </div>
                     
-                    <div className="candidate-section">
-                        <p className="candidate-title">출마 계획이 있으신가요?</p>
-                        <div className="candidate-options">
-                            <label className="radio-label">
-                                <input
-                                    type="radio"
-                                    name="candidateIntention"
-                                    value="언젠가 출마할 것이다"
-                                    checked={userInfo.candidateIntention === '언젠가 출마할 것이다'}
-                                    onChange={(e) => setUserInfo({...userInfo, candidateIntention: e.target.value})}
-                                />
-                                <span>언젠가 출마할 것이다</span>
-                            </label>
-                            <label className="radio-label">
-                                <input
-                                    type="radio"
-                                    name="candidateIntention"
-                                    value="2026 지방선거에 출마할 것이다"
-                                    checked={userInfo.candidateIntention === '2026 지방선거에 출마할 것이다'}
-                                    onChange={(e) => setUserInfo({...userInfo, candidateIntention: e.target.value})}
-                                />
-                                <span>2026 지방선거에 출마할 것이다</span>
-                            </label>
-                            <label className="radio-label">
-                                <input
-                                    type="radio"
-                                    name="candidateIntention"
-                                    value="출마를 고민하거나 계획하고 있다"
-                                    checked={userInfo.candidateIntention === '출마를 고민하거나 계획하고 있다'}
-                                    onChange={(e) => setUserInfo({...userInfo, candidateIntention: e.target.value})}
-                                />
-                                <span>출마를 고민하거나 계획하고 있다</span>
-                            </label>
-                            <label className="radio-label">
-                                <input
-                                    type="radio"
-                                    name="candidateIntention"
-                                    value="출마를 고려하지 않는다"
-                                    checked={userInfo.candidateIntention === '출마를 고려하지 않는다'}
-                                    onChange={(e) => setUserInfo({...userInfo, candidateIntention: e.target.value})}
-                                />
-                                <span>출마를 고려하지 않는다</span>
-                            </label>
-                        </div>
+                    <div className="candidate-dropdown-section">
+                        <select
+                            value={userInfo.candidateIntention}
+                            onChange={(e) => setUserInfo({...userInfo, candidateIntention: e.target.value})}
+                            className="start-dropdown"
+                            required
+                        >
+                            <option value="">출마 계획을 선택해주세요</option>
+                            <option value="언젠가 출마할 것이다">언젠가 출마할 것이다</option>
+                            <option value="2026 지방선거에 출마할 것이다">2026 지방선거에 출마할 것이다</option>
+                            <option value="출마를 고민하거나 계획하고 있다">출마를 고민하거나 계획하고 있다</option>
+                            <option value="출마를 고려하지 않는다">출마를 고려하지 않는다</option>
+                        </select>
                     </div>
                     
                     <div className="privacy-section">
@@ -557,21 +554,6 @@ function App() {
                 <button className="start-btn" onClick={handleStart}>
                     진단 시작하기
                 </button>
-                
-                <div className="competency-intro-small">
-                    <div className="competency-mini">
-                        <strong>자기 역량</strong>
-                        <span>리더십, 전문성, 영향력</span>
-                    </div>
-                    <div className="competency-mini">
-                        <strong>지역 활동</strong>
-                        <span>지역 이해도, 네트워크</span>
-                    </div>
-                    <div className="competency-mini">
-                        <strong>정당 활동</strong>
-                        <span>정당 이해, 활동 경험</span>
-                    </div>
-                </div>
             </div>
         </div>
     );

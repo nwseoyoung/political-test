@@ -772,56 +772,106 @@ body {
     box-shadow: 0 4px 12px rgba(218, 224, 0, 0.3);
 }
 
-.candidate-section {
-    margin-top: 25px;
-    padding: 20px;
+.competency-highlight {
     background: white;
-    border-radius: 10px;
-    border: 1px solid #e0e0e0;
+    border-radius: 15px;
+    padding: 30px 20px;
+    margin: 30px 0;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
 }
 
-.candidate-title {
-    font-size: 1rem;
-    font-weight: 600;
+.competency-title {
+    font-size: 1.4rem;
+    font-weight: 700;
     color: #1a1a1a;
-    margin-bottom: 15px;
+    text-align: center;
+    margin-bottom: 25px;
 }
 
-.candidate-options {
+.competency-cards {
     display: flex;
-    flex-direction: column;
-    gap: 10px;
+    gap: 15px;
+    margin-bottom: 20px;
 }
 
-.radio-label {
-    display: flex;
-    align-items: center;
-    padding: 10px 15px;
+.competency-card-start {
+    flex: 1;
     background: #f8f9fa;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.2s;
+    border-radius: 12px;
+    padding: 20px 15px;
+    text-align: center;
     border: 2px solid transparent;
+    transition: all 0.3s;
 }
 
-.radio-label:hover {
-    background: #f0f0f0;
+.competency-card-start:hover {
+    border-color: #DAE000;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(218, 224, 0, 0.2);
 }
 
-.radio-label input[type="radio"] {
-    margin-right: 10px;
-    width: 18px;
-    height: 18px;
-    cursor: pointer;
+.competency-icon {
+    font-size: 2rem;
+    margin-bottom: 10px;
 }
 
-.radio-label input[type="radio"]:checked + span {
-    font-weight: 600;
+.competency-card-start h3 {
+    font-size: 1rem;
+    font-weight: 700;
     color: #1a1a1a;
+    margin-bottom: 5px;
 }
 
-.radio-label:has(input:checked) {
-    background: #fff;
+.competency-count {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #DAE000;
+    margin: 5px 0;
+}
+
+.competency-desc {
+    font-size: 0.85rem;
+    color: #666;
+    display: block;
+}
+
+.competency-subdesc {
+    text-align: center;
+    font-size: 0.95rem;
+    color: #666;
+    line-height: 1.6;
+}
+
+.candidate-dropdown-section {
+    margin-top: 15px;
+}
+
+.start-dropdown {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-family: 'Pretendard', sans-serif;
+    background: white;
+    color: #1a1a1a;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    background-size: 20px;
+    padding-right: 45px;
+}
+
+.start-dropdown:focus {
+    outline: none;
+    border-color: #DAE000;
+    box-shadow: 0 0 0 3px rgba(218, 224, 0, 0.1);
+}
+
+.start-dropdown:hover {
     border-color: #DAE000;
 }
 
@@ -1006,6 +1056,46 @@ body {
 }
 
 @media (max-width: 768px) {
+    .competency-highlight {
+        padding: 20px 15px;
+        margin: 20px 0;
+    }
+    
+    .competency-title {
+        font-size: 1.1rem;
+        margin-bottom: 20px;
+    }
+    
+    .competency-cards {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .competency-card-start {
+        padding: 15px;
+    }
+    
+    .competency-icon {
+        font-size: 1.5rem;
+        margin-bottom: 8px;
+    }
+    
+    .competency-count {
+        font-size: 1rem;
+    }
+    
+    .competency-subdesc {
+        font-size: 0.9rem;
+    }
+    
+    .candidate-dropdown-section {
+        margin-top: 10px;
+    }
+    
+    .start-dropdown {
+        padding: 12px;
+        font-size: 0.95rem;
+    }
     .container {
         padding: 10px;
     }
