@@ -196,10 +196,10 @@ function App() {
         if (!savedUserInfo) return;
         
         const user = JSON.parse(savedUserInfo);
-        const personalityType = getPersonalityTypeForEmail(selfScore, localScore, partyScore);
+        const weaknessMessage = getWeakSubcategories();
         
-        // 선택한 문항들을 카테고리별로 정리
-        const selectedItemsByCategory = getSelectedItemsByCategory();
+        // 선택한 문항들을 세부 역량별로 정리
+        const selectedItemsBySubcategory = getSelectedItemsBySubcategory();
         
         const emailData = {
             user_name: user.name,
@@ -212,11 +212,8 @@ function App() {
             self_score: selfScore,
             local_score: localScore,
             party_score: partyScore,
-            personality_type: personalityType.type,
-            personality_message: personalityType.message,
-            selected_self: selectedItemsByCategory.self.join('\n'),
-            selected_local: selectedItemsByCategory.local.join('\n'),
-            selected_party: selectedItemsByCategory.party.join('\n')
+            weakness_message: weaknessMessage,
+            selected_items: selectedItemsBySubcategory
         };
         
         // 스티비 API를 통한 이메일 전송 (Vercel Functions 사용)
@@ -287,6 +284,29 @@ function App() {
                     console.log('EmailJS 전송 실패:', error);
                 });
         }
+    };
+    
+    const getSelectedItemsBySubcategory = () => {
+        const selectedItems = {};
+        
+        baseQuestions.forEach(baseQ => {
+            const subcategory = baseQ.subcategory;
+            if (!selectedItems[subcategory]) {
+                selectedItems[subcategory] = [];
+            }
+            
+            baseQ.detailQuestions.forEach(detailQ => {
+                if (allSelectedDetails[detailQ.id]) {
+                    selectedItems[subcategory].push(detailQ.text);
+                }
+            });
+            
+            if (selectedItems[subcategory].length === 0) {
+                selectedItems[subcategory].push('• 선택한 항목 없음');
+            }
+        });
+        
+        return selectedItems;
     };
     
     const getSelectedItemsByCategory = () => {
@@ -437,7 +457,7 @@ function App() {
                 <p className="start-subtitle">나는 지금 얼마나 준비됐을까?</p>
                 <h1 className="start-title">정치인 역량 테스트</h1>
                 <p className="start-description">
-                    전현직 젊치인과 함께 만든<br/>
+                    뉴웨이즈와 전현직 정치인이 함께 만든<br/>
                     정치인 역량 테스트로 나만의 성장 경로를 세워보세요.
                 </p>
                 
@@ -560,7 +580,7 @@ function App() {
             <div className="quiz-container">
                 <div className="quiz-header-fixed">
                     <div className="progress-info">
-                        <span className="category-info">{baseQuestion.category}</span>
+                        <span className="category-info">{baseQuestion.subcategory}</span>
                         <span>{currentBaseQuestion + 1}/12</span>
                     </div>
                     <div className="progress-bar">
@@ -614,28 +634,10 @@ function App() {
         );
     };
 
-    const getWeakestCategory = () => {
+    const isLowestCategory = (categoryName) => {
         const selfScore = getCategoryScore('자기 역량');
         const localScore = getCategoryScore('지역 활동');
         const partyScore = getCategoryScore('정당 활동');
-        
-        // 세부 카테고리별 점수 계산
-        const subcategoryScores = {};
-        baseQuestions.forEach(baseQ => {
-            if (!subcategoryScores[baseQ.subcategory]) {
-                subcategoryScores[baseQ.subcategory] = 0;
-            }
-            baseQ.detailQuestions.forEach(detailQ => {
-                if (allSelectedDetails[detailQ.id]) {
-                    subcategoryScores[baseQ.subcategory]++;
-                }
-            });
-        });
-        
-        // 가장 낮은 점수의 카테고리 찾기
-        let weakestCategory = '';
-        let weakestSubcategory = '';
-        let lowestScore = Infinity;
         
         const categories = [
             { name: '자기 역량', score: selfScore, max: 18 },
@@ -643,43 +645,95 @@ function App() {
             { name: '정당 활동', score: partyScore, max: 15 }
         ];
         
+        let lowestPercentage = Infinity;
+        let lowestCategoryName = '';
+        
         categories.forEach(cat => {
             const percentage = (cat.score / cat.max) * 100;
-            if (percentage < lowestScore) {
-                lowestScore = percentage;
-                weakestCategory = cat.name;
+            if (percentage < lowestPercentage) {
+                lowestPercentage = percentage;
+                lowestCategoryName = cat.name;
             }
         });
         
-        // 해당 카테고리의 가장 약한 세부 카테고리 찾기
-        let minSubScore = Infinity;
-        baseQuestions.forEach(baseQ => {
-            if (baseQ.category === weakestCategory) {
-                const subScore = subcategoryScores[baseQ.subcategory] || 0;
-                if (subScore < minSubScore) {
-                    minSubScore = subScore;
-                    weakestSubcategory = baseQ.subcategory;
-                }
-            }
-        });
-        
-        return {
-            category: weakestCategory,
-            subcategory: weakestSubcategory,
-            message: `${weakestCategory} 중에서도 특히 ${weakestSubcategory} 역량을 보완하면 좋겠어요.`
-        };
+        return categoryName === lowestCategoryName;
     };
     
-    const getPersonalityType = () => {
-        const weak = getWeakestCategory();
+    const getWeakSubcategories = () => {
+        // 세부 카테고리별 점수 및 최대 점수 계산
+        const subcategoryData = {};
         
-        return {
-            type: weak.category + ' 보완 필요',
-            icon: '',
-            message: weak.message,
-            color: '#333'
-        };
+        baseQuestions.forEach(baseQ => {
+            if (!subcategoryData[baseQ.subcategory]) {
+                subcategoryData[baseQ.subcategory] = {
+                    score: 0,
+                    max: 0,
+                    category: baseQ.category
+                };
+            }
+            
+            subcategoryData[baseQ.subcategory].max += baseQ.detailQuestions.length;
+            
+            baseQ.detailQuestions.forEach(detailQ => {
+                if (allSelectedDetails[detailQ.id]) {
+                    subcategoryData[baseQ.subcategory].score++;
+                }
+            });
+        });
+        
+        // 달성률 계산 및 정렬
+        const subcategoryList = [];
+        Object.keys(subcategoryData).forEach(subcat => {
+            const data = subcategoryData[subcat];
+            const percentage = (data.score / data.max) * 100;
+            subcategoryList.push({
+                name: subcat,
+                category: data.category,
+                percentage: percentage
+            });
+        });
+        
+        // 달성률이 낮은 순으로 정렬
+        subcategoryList.sort((a, b) => a.percentage - b.percentage);
+        
+        // 상위 3개 선택 (최대 5개까지 확장 가능)
+        let weakCount = 3;
+        if (subcategoryList.length > 3) {
+            // 3위와 4위의 차이가 5% 이내면 4위도 포함
+            if (subcategoryList[3] && subcategoryList[2].percentage + 5 >= subcategoryList[3].percentage) {
+                weakCount = 4;
+            }
+            // 4위와 5위의 차이가 5% 이내면 5위도 포함
+            if (weakCount === 4 && subcategoryList[4] && subcategoryList[3].percentage + 5 >= subcategoryList[4].percentage) {
+                weakCount = 5;
+            }
+        }
+        
+        const weakSubcategories = subcategoryList.slice(0, Math.min(weakCount, subcategoryList.length));
+        
+        // 모든 역량이 50% 이상인 경우
+        if (weakSubcategories.length === 0 || weakSubcategories[0].percentage >= 50) {
+            return '모든 역량이 고루 준비되어 있습니다. 출마를 고려해보세요!';
+        }
+        
+        // 카테고리별로 그룹핑
+        const byCategory = {};
+        weakSubcategories.forEach(item => {
+            if (!byCategory[item.category]) {
+                byCategory[item.category] = [];
+            }
+            byCategory[item.category].push(item.name);
+        });
+        
+        // 문장으로 표현
+        const parts = [];
+        Object.keys(byCategory).forEach(cat => {
+            parts.push(`${cat}(${byCategory[cat].join(', ')})`);
+        });
+        
+        return '보완이 필요한 역량: ' + parts.join(', ');
     };
+    
 
     const renderResult = () => {
         const today = new Date().toLocaleDateString('ko-KR', { 
@@ -689,36 +743,31 @@ function App() {
         }).replace(/\. /g, '.').replace('.', '');
 
         const totalScore = getTotalAnsweredCount();
-        const personalityType = getPersonalityType();
         
         return (
             <div className="result-screen">
                 <div className="result-header">
                     <img src="images/mate-character-1.png" alt="뉴웨이즈 메이트" className="mate-character-result" />
-                    <div className="total-score">{totalScore}/52</div>
-                    <div className="personality-feedback">
-                        <p className="feedback-message">
-                            {personalityType.message}
-                        </p>
-                    </div>
+                    <h1 className="result-title">{userInfo.name}님의 정치인 역량 테스트 결과</h1>
+                    <div className="total-score">총점: {totalScore}/52</div>
                 </div>
 
                 <div className="score-cards">
-                    <div className={`score-card ${getCategoryScore('자기 역량') >= 9 ? 'high-score' : 'low-score'}`}>
+                    <div className={`score-card ${isLowestCategory('자기 역량') ? 'lowest-score' : ''}`}>
                         <h3>자기 역량</h3>
                         <div className="score-value">{getCategoryScore('자기 역량')}/18</div>
                         <div className="score-indicator" style={{
                             backgroundColor: getCategoryScore('자기 역량') >= 9 ? '#DAE000' : '#666'
                         }}></div>
                     </div>
-                    <div className={`score-card ${getCategoryScore('지역 활동') >= 10 ? 'high-score' : 'low-score'}`}>
+                    <div className={`score-card ${isLowestCategory('지역 활동') ? 'lowest-score' : ''}`}>
                         <h3>지역 활동</h3>
                         <div className="score-value">{getCategoryScore('지역 활동')}/19</div>
                         <div className="score-indicator" style={{
                             backgroundColor: getCategoryScore('지역 활동') >= 10 ? '#DAE000' : '#666'
                         }}></div>
                     </div>
-                    <div className={`score-card ${getCategoryScore('정당 활동') >= 8 ? 'high-score' : 'low-score'}`}>
+                    <div className={`score-card ${isLowestCategory('정당 활동') ? 'lowest-score' : ''}`}>
                         <h3>정당 활동</h3>
                         <div className="score-value">{getCategoryScore('정당 활동')}/15</div>
                         <div className="score-indicator" style={{
@@ -727,26 +776,32 @@ function App() {
                     </div>
                 </div>
 
+                <div className="personality-feedback">
+                    <p className="feedback-message">
+                        {getWeakSubcategories()}
+                    </p>
+                </div>
+
                 <div className="result-info-section">
                     <p className="result-info-text">
-                        더 자세한 역량 해설과 자기경쟁력을 정리하는 워크시트를<br/>
-                        이메일로 보내드렸어요. 확인해 보세요.
+                        더 자세한 역량 해설을 이메일로 보내드렸어요.<br/>
+                        확인해 보세요.
                     </p>
                 </div>
 
                 <div className="bootcamp-section">
-                    <h3 className="bootcamp-title">정치인 역량 강화 실전 전략을 더 알고 싶다면?</h3>
+                    <h3 className="bootcamp-title">부족한 역량 강화하는 실전 전략 알고 싶다면?</h3>
                     <p className="bootcamp-description">
-                        뉴웨이즈 부트캠프 워크숍을 신청해 보세요.
+                        정치 기초 지식부터 출마 실전 전략까지 하루만에 배울 수 있어요.
                     </p>
-                    <button className="cta-btn" onClick={() => window.open('https://newways.kr/1daybootcamp?utm_source=homepage&utm_medium=landing&utm_campaign=1daycamp_selfcheck&utm_content=250813', '_blank')}>
+                    <button className="cta-btn bootcamp-cta" onClick={() => window.open('https://newways.kr/1daybootcamp?utm_source=homepage&utm_medium=landing&utm_campaign=1daycamp_selfcheck&utm_content=250813', '_blank')}>
                         부트캠프 신청하기
                     </button>
                 </div>
 
                 <div className="share-link-section">
                     <button className="share-link-btn" onClick={() => {
-                        const text = `정치인 역량 테스트 결과: ${totalScore}/52점\n${personalityType.message}\n\n테스트 하러가기: ${window.location.href}`;
+                        const text = `정치인 역량 테스트 결과: ${totalScore}/52점\n${getWeakSubcategories()}\n\n테스트 하러가기: https://newways.kr/ready-to-test?utm_source=referral&utm_medium=landing&utm_campaign=selfcheck_share`;
                         navigator.clipboard.writeText(text);
                         alert('링크가 복사되었습니다!');
                     }}>
@@ -818,10 +873,9 @@ function App() {
 2. 개인정보 수집·이용 목적
    - 정치 역량 테스트 결과 제공
    - 맞춤형 교육 프로그램 안내
-   - 정치 관련 정보 및 소식 전달 (동의 시)
 
 3. 개인정보 보유 및 이용 기간
-   - 수집일로부터 3년
+   - 수집일로부터 1년
    - 단, 관계 법령에 따라 보존할 필요가 있는 경우 해당 기간 동안 보존
 
 4. 동의를 거부할 권리
@@ -834,15 +888,12 @@ function App() {
                         content: `
 1. 제공받는 자
    - 스티비(Stibee): 이메일 발송 서비스
-   - Google: 데이터 분석 및 저장
 
 2. 제공하는 개인정보 항목
    - 스티비: 이름, 이메일, 연락처, 테스트 결과
-   - Google: 이름, 이메일, 출마 의사, 테스트 일시
 
 3. 제공받는 자의 이용 목적
    - 스티비: 테스트 결과 이메일 발송 및 마케팅 정보 전달
-   - Google: 통계 분석 및 서비스 개선
 
 4. 보유 및 이용 기간
    - 제공 목적 달성 시까지

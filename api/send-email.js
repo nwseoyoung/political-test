@@ -39,11 +39,8 @@ export default async function handler(req, res) {
         self_score,
         local_score,
         party_score,
-        personality_type,
-        personality_message,
-        selected_self,
-        selected_local,
-        selected_party
+        weakness_message,
+        selected_items
     } = req.body;
     
     // 스티비 API 설정
@@ -72,16 +69,14 @@ export default async function handler(req, res) {
                         // 커스텀 필드 (스티비에서 미리 생성 필요)
                         customFields: {
                             test_date: test_date,
-                            total_score: total_score.toString(),
-                            self_score: self_score.toString(),
-                            local_score: local_score.toString(),
-                            party_score: party_score.toString(),
-                            personality_type: personality_type,
-                            candidate_intention: candidate_intention,
-                            marketing_agree: marketing_agree,
-                            selected_self: selected_self,
-                            selected_local: selected_local,
-                            selected_party: selected_party
+                            total_score: total_score ? total_score.toString() : '0',
+                            self_score: self_score ? self_score.toString() : '0',
+                            local_score: local_score ? local_score.toString() : '0',
+                            party_score: party_score ? party_score.toString() : '0',
+                            weakness_message: weakness_message || '',
+                            candidate_intention: candidate_intention || '',
+                            marketing_agree: marketing_agree || 'N',
+                            selected_items: selected_items ? JSON.stringify(selected_items) : '{}'
                         }
                     }]
                 })
