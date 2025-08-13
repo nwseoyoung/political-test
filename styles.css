@@ -235,14 +235,18 @@ body {
 
 @media (min-width: 769px) {
     .navigation {
-        bottom: 20px;
-        padding: 20px;
+        bottom: 10px;
+        padding: 15px 20px;
         border-radius: 12px;
         box-shadow: 0 4px 20px rgba(0,0,0,0.1);
     }
     
     .quiz-content {
-        padding-bottom: 140px;
+        padding-bottom: 100px;
+    }
+    
+    .option-list {
+        margin-bottom: 10px;
     }
 }
 
