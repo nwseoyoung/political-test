@@ -213,6 +213,7 @@ function App() {
         
         const user = JSON.parse(savedUserInfo);
         const weaknessMessage = getWeakSubcategories();
+        const strengthMessage = getStrongSubcategories();
         
         // 선택한 문항들을 세부 역량별로 정리
         const selectedItemsBySubcategory = getSelectedItemsBySubcategory();
@@ -229,6 +230,7 @@ function App() {
             local_score: localScore,
             party_score: partyScore,
             weakness_message: weaknessMessage,
+            strength_message: strengthMessage || '',
             selected_items: selectedItemsBySubcategory
         };
         
@@ -675,6 +677,63 @@ function App() {
         return categoryName === lowestCategoryName;
     };
     
+    const getStrongSubcategories = () => {
+        // 세부 카테고리별 점수 및 최대 점수 계산
+        const subcategoryData = {};
+        
+        baseQuestions.forEach(baseQ => {
+            if (!subcategoryData[baseQ.subcategory]) {
+                subcategoryData[baseQ.subcategory] = {
+                    score: 0,
+                    max: 0,
+                    category: baseQ.category
+                };
+            }
+            
+            subcategoryData[baseQ.subcategory].max += baseQ.detailQuestions.length;
+            
+            baseQ.detailQuestions.forEach(detailQ => {
+                if (allSelectedDetails[detailQ.id]) {
+                    subcategoryData[baseQ.subcategory].score++;
+                }
+            });
+        });
+        
+        // 70% 이상인 강점 역량 찾기
+        const strongSubcategories = [];
+        Object.keys(subcategoryData).forEach(subcat => {
+            const data = subcategoryData[subcat];
+            const percentage = (data.score / data.max) * 100;
+            if (percentage >= 70) {
+                strongSubcategories.push({
+                    name: subcat,
+                    category: data.category,
+                    percentage: percentage
+                });
+            }
+        });
+        
+        if (strongSubcategories.length === 0) {
+            return null;
+        }
+        
+        // 카테고리별로 그룹핑
+        const byCategory = {};
+        strongSubcategories.forEach(item => {
+            if (!byCategory[item.category]) {
+                byCategory[item.category] = [];
+            }
+            byCategory[item.category].push(item.name);
+        });
+        
+        const parts = [];
+        Object.keys(byCategory).forEach(cat => {
+            parts.push(`${cat}(${byCategory[cat].join(', ')})`);
+        });
+        
+        return '강점 역량: ' + parts.join(', ');
+    };
+    
     const getWeakSubcategories = () => {
         // 세부 카테고리별 점수 및 최대 점수 계산
         const subcategoryData = {};
@@ -793,6 +852,11 @@ function App() {
                 </div>
 
                 <div className="personality-feedback">
+                    {getStrongSubcategories() && (
+                        <p className="feedback-message strong-message">
+                            {getStrongSubcategories()}
+                        </p>
+                    )}
                     <p className="feedback-message">
                         {getWeakSubcategories()}
                     </p>
@@ -814,7 +878,9 @@ function App() {
 
                 <div className="share-link-section">
                     <button className="share-link-btn" onClick={() => {
-                        const text = `정치인 역량 테스트 결과: ${totalScore}/52점\n${getWeakSubcategories()}\n\n테스트 하러가기: https://newways.kr/ready-to-test?utm_source=referral&utm_medium=landing&utm_campaign=selfcheck_share`;
+                        const strengthMsg = getStrongSubcategories();
+                        const weakMsg = getWeakSubcategories();
+                        const text = `정치인 역량 테스트 결과: ${totalScore}/52점\n${strengthMsg ? strengthMsg + '\n' : ''}${weakMsg}\n\n테스트 하러가기: https://newways.kr/ready-to-test?utm_source=referral&utm_medium=landing&utm_campaign=selfcheck_share`;
                         navigator.clipboard.writeText(text);
                         alert('링크가 복사되었습니다!');
                     }}>

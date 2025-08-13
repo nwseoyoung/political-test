@@ -40,6 +40,7 @@ export default async function handler(req, res) {
         local_score,
         party_score,
         weakness_message,
+        strength_message,
         selected_items
     } = req.body;
     
@@ -74,6 +75,7 @@ export default async function handler(req, res) {
                             local_score: local_score ? local_score.toString() : '0',
                             party_score: party_score ? party_score.toString() : '0',
                             weakness_message: weakness_message || '',
+                            strength_message: strength_message || '',
                             candidate_intention: candidate_intention || '',
                             marketing_agree: marketing_agree || 'N',
                             selected_items: selected_items ? JSON.stringify(selected_items) : '{}'
