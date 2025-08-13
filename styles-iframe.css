@@ -2,14 +2,13 @@
 /* 캠페이너스 iframe 내에서 한 화면에 모든 요소가 보이도록 최적화 */
 
 @media (max-width: 768px) {
-    /* 컨테이너 높이 최적화 */
+    /* 컨테이너 - 자연스러운 높이 */
     .quiz-container {
-        height: 100vh !important;
-        height: 100dvh !important;
-        max-height: -webkit-fill-available !important;
+        min-height: 100vh !important;
         display: flex !important;
         flex-direction: column !important;
-        overflow: hidden !important;
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
     }
     
     /* 헤더 적당히 압축 */
@@ -49,12 +48,10 @@
     
     /* 콘텐츠 영역 - 자연스러운 흐름 */
     .quiz-content {
-        flex: 1 !important;
+        flex: 0 0 auto !important;
         padding: 0 10px !important;
-        overflow-y: auto !important;
-        overflow-x: hidden !important;
-        display: flex !important;
-        flex-direction: column !important;
+        overflow: visible !important;
+        display: block !important;
     }
     
     .option-list {
@@ -84,16 +81,21 @@
         flex-shrink: 0 !important;
     }
     
-    /* 네비게이션 - 옵션 바로 아래 자연스럽게 */
+    /* 네비게이션 - 선택지 바로 아래 */
     .navigation {
-        position: relative !important;
-        bottom: auto !important;
+        position: static !important;
+        bottom: unset !important;
+        left: unset !important;
+        right: unset !important;
+        width: 100% !important;
         padding: 12px 10px !important;
         gap: 10px !important;
-        flex-shrink: 0 !important;
-        margin-top: auto !important;
+        margin-top: 15px !important;
+        margin-bottom: 20px !important;
         background: white !important;
         border-top: 1px solid #e0e0e0 !important;
+        display: flex !important;
+        justify-content: space-between !important;
     }
     
     .nav-btn {
@@ -162,10 +164,10 @@
 /* iframe 내 스크롤 최적화 */
 body {
     overflow-x: hidden !important;
+    overflow-y: auto !important;
 }
 
 .app-container {
-    height: 100vh !important;
-    height: 100dvh !important;
-    overflow: hidden !important;
+    min-height: 100vh !important;
+    overflow: visible !important;
 }
