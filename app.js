@@ -28,7 +28,23 @@ function App() {
     useEffect(() => {
         // 페이지 변경 시 화면 상단으로 스크롤
         if (currentScreen === 'quiz') {
-            window.scrollTo({ top: 0, behavior: 'auto' });
+            // iframe 내부와 일반 페이지 모두 대응
+            window.scrollTo(0, 0);
+            // 부모 창이 있는 경우 (iframe 내부인 경우)
+            if (window.parent !== window) {
+                try {
+                    window.parent.scrollTo(0, 0);
+                } catch (e) {
+                    // 크로스 도메인 제한으로 실패할 수 있음
+                }
+            }
+            // quiz-header 요소로 직접 스크롤
+            setTimeout(() => {
+                const header = document.querySelector('.quiz-header-fixed');
+                if (header) {
+                    header.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }, 100);
         }
     }, [currentScreen, currentBaseQuestion]);
     
@@ -149,8 +165,12 @@ function App() {
             
             // 화면 상단으로 스크롤
             setTimeout(() => {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }, 100);
+                window.scrollTo(0, 0);
+                const header = document.querySelector('.quiz-header-fixed');
+                if (header) {
+                    header.scrollIntoView({ behavior: 'auto', block: 'start' });
+                }
+            }, 50);
         } else {
             calculateResults();
         }
@@ -195,8 +215,12 @@ function App() {
             
             // 화면 상단으로 스크롤
             setTimeout(() => {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }, 100);
+                window.scrollTo(0, 0);
+                const header = document.querySelector('.quiz-header-fixed');
+                if (header) {
+                    header.scrollIntoView({ behavior: 'auto', block: 'start' });
+                }
+            }, 50);
         }
     };
 
