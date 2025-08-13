@@ -21,7 +21,7 @@
     
     .progress-info {
         margin-bottom: 2px !important;
-        font-size: 0.7rem !important;
+        font-size: 0.85rem !important;
     }
     
     .progress-bar {
@@ -35,14 +35,14 @@
     }
     
     .question-text {
-        font-size: 0.8rem !important;
-        margin-bottom: 1px !important;
-        line-height: 1.1 !important;
+        font-size: 0.95rem !important;
+        margin-bottom: 2px !important;
+        line-height: 1.2 !important;
     }
     
     .question-hint {
-        font-size: 0.65rem !important;
-        margin-bottom: 1px !important;
+        font-size: 0.75rem !important;
+        margin-bottom: 2px !important;
     }
     
     /* 콘텐츠 영역 - 극도로 압축 */
@@ -62,9 +62,9 @@
     }
     
     .option-item {
-        padding: 5px 6px !important;
+        padding: 7px 8px !important;
         margin-bottom: 1px !important;
-        min-height: 28px !important;
+        min-height: 32px !important;
     }
     
     .option-item:last-child {
@@ -72,8 +72,8 @@
     }
     
     .option-text {
-        font-size: 0.72rem !important;
-        line-height: 1.1 !important;
+        font-size: 0.85rem !important;
+        line-height: 1.2 !important;
     }
     
     .option-checkbox {
@@ -93,9 +93,9 @@
     }
     
     .nav-btn {
-        padding: 8px !important;
-        font-size: 0.75rem !important;
-        border-radius: 6px !important;
+        padding: 10px !important;
+        font-size: 0.9rem !important;
+        border-radius: 8px !important;
         border-width: 1.5px !important;
     }
 }
