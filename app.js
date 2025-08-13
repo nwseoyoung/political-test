@@ -529,7 +529,25 @@ function App() {
                 
                 <div className="competency-highlight">
                     <h2 className="competency-title">총 52개 항목을 체크해보세요</h2>
-                    <div className="competency-cards" onMouseDown={(e) => {
+                    <div className="competency-cards" 
+                        onScroll={(e) => {
+                            const scrollLeft = e.currentTarget.scrollLeft;
+                            const scrollWidth = e.currentTarget.scrollWidth;
+                            const clientWidth = e.currentTarget.clientWidth;
+                            const scrollPercentage = scrollLeft / (scrollWidth - clientWidth);
+                            
+                            const dots = document.querySelectorAll('.scroll-indicator .dot');
+                            dots.forEach(dot => dot.classList.remove('active'));
+                            
+                            if (scrollPercentage < 0.33) {
+                                dots[0]?.classList.add('active');
+                            } else if (scrollPercentage < 0.66) {
+                                dots[1]?.classList.add('active');
+                            } else {
+                                dots[2]?.classList.add('active');
+                            }
+                        }}
+                        onMouseDown={(e) => {
                         const ele = e.currentTarget;
                         let isDown = true;
                         let startX = e.pageX - ele.offsetLeft;
@@ -541,6 +559,23 @@ function App() {
                             const x = e.pageX - ele.offsetLeft;
                             const walk = (x - startX) * 2;
                             ele.scrollLeft = scrollLeft - walk;
+                            
+                            // 스크롤 시 인디케이터 업데이트
+                            const newScrollLeft = ele.scrollLeft;
+                            const scrollWidth = ele.scrollWidth;
+                            const clientWidth = ele.clientWidth;
+                            const scrollPercentage = newScrollLeft / (scrollWidth - clientWidth);
+                            
+                            const dots = document.querySelectorAll('.scroll-indicator .dot');
+                            dots.forEach(dot => dot.classList.remove('active'));
+                            
+                            if (scrollPercentage < 0.33) {
+                                dots[0]?.classList.add('active');
+                            } else if (scrollPercentage < 0.66) {
+                                dots[1]?.classList.add('active');
+                            } else {
+                                dots[2]?.classList.add('active');
+                            }
                         };
                         
                         const handleMouseUp = () => {
@@ -873,6 +908,9 @@ function App() {
     
     // 3개 대분류 카테고리의 상대적 강점 분석
     const getCategoryOverview = () => {
+        const savedUserInfo = localStorage.getItem('testUserInfo');
+        const userName = savedUserInfo ? JSON.parse(savedUserInfo).name : '';
+        
         const selfScore = getCategoryScore('자기 역량');
         const localScore = getCategoryScore('지역 활동');
         const partyScore = getCategoryScore('정당 활동');
@@ -887,8 +925,9 @@ function App() {
         // 달성률 높은 순으로 정렬
         categories.sort((a, b) => b.percentage - a.percentage);
         
-        // 총평 생성
-        let overview = `${categories[0].name}(${Math.round(categories[0].percentage)}%)이 가장 높은 준비도를 보이고 있습니다. `;
+        // 총평 생성 (이름 포함)
+        let overview = userName ? `${userName}님은 ` : '';
+        overview += `${categories[0].name}(${Math.round(categories[0].percentage)}%)이 가장 높은 준비도를 보이고 있습니다. `;
         
         // 상위 카테고리와 하위 카테고리의 차이가 20% 이상이면 언급
         if (categories[0].percentage - categories[2].percentage > 20) {
@@ -954,21 +993,22 @@ function App() {
                             {getStrongSubcategories()}
                         </p>
                     )}
-                    <p className="feedback-message">
+                    <p className="feedback-message weak-message">
                         {getWeakSubcategories()}
                     </p>
                     {marketingAgree && (
-                        <p className="email-notice" style={{fontWeight: 'bold'}}>
+                        <p className="email-notice">
                             더 자세한 역량 해설을 이메일로 보냈어요.<br/>
-                            메일함을 확인해 주세요.
+                            메일함을 확인해 주세요. 📧
                         </p>
                     )}
                 </div>
 
                 <div className="bootcamp-section">
-                    <h3 className="bootcamp-title">정치인 준비 실전 전략 더 알고 싶다면?</h3>
+                    <h3 className="bootcamp-title">🎯 정치인 준비 실전 전략 더 알고 싶다면?</h3>
                     <p className="bootcamp-description">
-                        뉴웨이즈 부트캠프에서는 정치 기초 지식부터 출마 실전 전략까지 하루만에 배울 수 있어요.
+                        뉴웨이즈 부트캠프에서는 정치 기초 지식부터 출마 실전 전략까지<br/>
+                        하루만에 배울 수 있어요.
                     </p>
                     <button className="cta-btn bootcamp-cta" onClick={() => window.open('https://newways.kr/1daybootcamp?utm_source=homepage&utm_medium=landing&utm_campaign=1daycamp_selfcheck&utm_content=250813', '_blank')}>
                         부트캠프 신청하기

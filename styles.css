@@ -761,6 +761,11 @@ body {
     margin-bottom: 20px;
 }
 
+.feedback-message.weak-message {
+    color: #c41e3a;
+    font-weight: 500;
+}
+
 .email-notice {
     font-size: 0.9rem;
     color: #666;
