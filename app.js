@@ -25,6 +25,13 @@ function App() {
     const [showPrivacyModal, setShowPrivacyModal] = useState(false);
     const [targetArticle, setTargetArticle] = useState('');
 
+    useEffect(() => {
+        // 페이지 변경 시 화면 상단으로 스크롤
+        if (currentScreen === 'quiz') {
+            window.scrollTo({ top: 0, behavior: 'auto' });
+        }
+    }, [currentScreen, currentBaseQuestion]);
+    
     const handleStart = () => {
         // 유효성 검사
         if (!userInfo.name || !userInfo.phone || !userInfo.email || !userInfo.candidateIntention) {
@@ -139,6 +146,11 @@ function App() {
             
             setSelectedDetails(nextQuestionDetails);
             setHasSelectedNone(hasNone);
+            
+            // 화면 상단으로 스크롤
+            setTimeout(() => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }, 100);
         } else {
             calculateResults();
         }
@@ -180,6 +192,11 @@ function App() {
             
             setSelectedDetails(prevQuestionDetails);
             setHasSelectedNone(hasNone);
+            
+            // 화면 상단으로 스크롤
+            setTimeout(() => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }, 100);
         }
     };
 
