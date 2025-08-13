@@ -525,7 +525,29 @@ function App() {
                 
                 <div className="competency-highlight">
                     <h2 className="competency-title">총 52개 항목을 체크해보세요</h2>
-                    <div className="competency-cards">
+                    <div className="competency-cards" onMouseDown={(e) => {
+                        const ele = e.currentTarget;
+                        let isDown = true;
+                        let startX = e.pageX - ele.offsetLeft;
+                        let scrollLeft = ele.scrollLeft;
+                        
+                        const handleMouseMove = (e) => {
+                            if (!isDown) return;
+                            e.preventDefault();
+                            const x = e.pageX - ele.offsetLeft;
+                            const walk = (x - startX) * 2;
+                            ele.scrollLeft = scrollLeft - walk;
+                        };
+                        
+                        const handleMouseUp = () => {
+                            isDown = false;
+                            document.removeEventListener('mousemove', handleMouseMove);
+                            document.removeEventListener('mouseup', handleMouseUp);
+                        };
+                        
+                        document.addEventListener('mousemove', handleMouseMove);
+                        document.addEventListener('mouseup', handleMouseUp);
+                    }}>
                         <div className="competency-card-start">
                             <h3>자기 역량</h3>
                             <p className="competency-count">18개 항목</p>
@@ -911,9 +933,9 @@ function App() {
                 </div>
 
                 <div className="bootcamp-section">
-                    <h3 className="bootcamp-title">부족한 역량 강화하는 실전 전략 알고 싶다면?</h3>
+                    <h3 className="bootcamp-title">더 상세한 해설과 노하우를 알고 싶다면?</h3>
                     <p className="bootcamp-description">
-                        정치 기초 지식부터 출마 실전 전략까지 하루만에 배울 수 있어요.
+                        뉴웨이즈 부트캠프에서는 정치 기초 지식부터 출마 실전 전략까지 하루만에 배울 수 있어요.
                     </p>
                     <button className="cta-btn bootcamp-cta" onClick={() => window.open('https://newways.kr/1daybootcamp?utm_source=homepage&utm_medium=landing&utm_campaign=1daycamp_selfcheck&utm_content=250813', '_blank')}>
                         부트캠프 신청하기
@@ -924,7 +946,7 @@ function App() {
                     <button className="share-link-btn" onClick={() => {
                         const strengthMsg = getStrongSubcategories();
                         const weakMsg = getWeakSubcategories();
-                        const text = `정치인 역량 테스트 결과: ${totalScore}/52점\n${strengthMsg ? strengthMsg + '\n' : ''}${weakMsg}\n\n테스트 하러가기: https://newways.kr/ready-to-test?utm_source=referral&utm_medium=landing&utm_campaign=selfcheck_share`;
+                        const text = `정치인 역량 테스트 결과: ${totalScore}/52점\n${strengthMsg ? strengthMsg + '\n' : ''}${weakMsg}\n\n테스트 하러가기: https://newways.kr/ready-to-test`;
                         navigator.clipboard.writeText(text);
                         alert('링크가 복사되었습니다!');
                     }}>
