@@ -363,7 +363,7 @@ function App() {
             });
             
             if (selectedInSubcategory.length > 0) {
-                selectedItemsText.push(`[${subcategory}]`);
+                selectedItemsText.push(`<strong>[${subcategory}]</strong>`);
                 selectedInSubcategory.forEach(item => {
                     selectedItemsText.push(`• ${item}`);
                 });
