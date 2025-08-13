@@ -60,7 +60,8 @@ export default async function handler(req, res) {
         weakness_message: weakness_message ? weakness_message.substring(0, 50) + '...' : '',
         strength_message: strength_message ? strength_message.substring(0, 50) + '...' : '',
         candidate_intention,
-        marketing_agree
+        marketing_agree,
+        selected_items: selected_items ? selected_items.substring(0, 100) + '...' : ''
     });
     
     try {
@@ -83,6 +84,7 @@ export default async function handler(req, res) {
         requestBody.subscribers[0].strength_message = strength_message || '';
         requestBody.subscribers[0].candidate_intention = candidate_intention || '';
         requestBody.subscribers[0].marketing_agree = marketing_agree || 'N';
+        requestBody.subscribers[0].selected_items = selected_items || '';
 
         console.log('Request body:', JSON.stringify(requestBody, null, 2));
 

@@ -346,26 +346,29 @@ function App() {
     };
     
     const getSelectedItemsBySubcategory = () => {
-        const selectedItems = {};
+        const selectedItemsText = [];
         
         baseQuestions.forEach(baseQ => {
             const subcategory = baseQ.subcategory;
-            if (!selectedItems[subcategory]) {
-                selectedItems[subcategory] = [];
-            }
+            const selectedInSubcategory = [];
             
             baseQ.detailQuestions.forEach(detailQ => {
                 if (allSelectedDetails[detailQ.id]) {
-                    selectedItems[subcategory].push(detailQ.text);
+                    selectedInSubcategory.push(detailQ.text);
                 }
             });
             
-            if (selectedItems[subcategory].length === 0) {
-                selectedItems[subcategory].push('• 선택한 항목 없음');
+            if (selectedInSubcategory.length > 0) {
+                selectedItemsText.push(`[${subcategory}]`);
+                selectedInSubcategory.forEach(item => {
+                    selectedItemsText.push(`• ${item}`);
+                });
+                selectedItemsText.push(''); // 빈 줄 추가
             }
         });
         
-        return selectedItems;
+        // 문자열로 변환하여 반환 (스티비 텍스트 필드용)
+        return selectedItemsText.join('\n');
     };
     
     const getSelectedItemsByCategory = () => {
