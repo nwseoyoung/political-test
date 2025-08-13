@@ -486,7 +486,7 @@ function App() {
         // 해설 페이지로 이동
         window.open(targetArticle, '_blank');
         setShowInfoModal(false);
-        setUserInfo({ name: '', phone: '', email: '' });
+        setUserInfo({ name: '', phone: '', email: '', candidateIntention: '' });
     };
 
 
@@ -957,7 +957,7 @@ function App() {
                     <p className="feedback-message">
                         {getWeakSubcategories()}
                     </p>
-                    {formData.marketing && (
+                    {marketingAgree && (
                         <p className="email-notice" style={{fontWeight: 'bold'}}>
                             더 자세한 역량 해설을 이메일로 보냈어요.<br/>
                             메일함을 확인해 주세요.
