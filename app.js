@@ -86,6 +86,13 @@ function App() {
         sendToGoogleSheets(userDataWithConsent);
         
         setCurrentScreen('quiz');
+        
+        // 퀴즈 시작 시 스크롤 상단으로 초기화
+        setTimeout(() => {
+            window.scrollTo(0, 0);
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+        }, 0);
     };
     
     const sendToGoogleSheets = (userData) => {
