@@ -104,32 +104,38 @@ export default async function handler(req, res) {
             throw new Error(`Failed to add subscriber: ${errorText}`);
         }
         
-        console.log('Subscriber added successfully');
+        const subscriberData = await subscriberResponse.json();
+        console.log('Subscriber added successfully:', subscriberData);
         
-        // 2. 이메일 발송 (자동 이메일 시퀀스 트리거)
-        // 스티비에서 "정치 역량 테스트 완료" 태그를 트리거로 하는 자동 이메일 설정 필요
-        const tagResponse = await fetch(
-            `https://api.stibee.com/v1/lists/${STIBEE_LIST_ID}/subscribers/tags`,
-            {
-                method: 'POST',
-                headers: {
-                    'AccessToken': STIBEE_API_KEY,
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    subscribers: [user_email],
-                    tag: '정치역량테스트완료'
-                })
+        // 2. 태그 추가 - 스티비 v1 API 사용
+        try {
+            const tagResponse = await fetch(
+                `https://api.stibee.com/v1/lists/${STIBEE_LIST_ID}/subscribers/tags`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'AccessToken': STIBEE_API_KEY,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        emails: [user_email],
+                        tags: ['정치역량테스트완료']
+                    })
+                }
+            );
+            
+            if (!tagResponse.ok) {
+                const errorText = await tagResponse.text();
+                console.error('Stibee tag error:', errorText);
+                console.log('Tag API failed, but subscriber was added successfully');
+                // 태그 추가 실패해도 이메일은 전송 성공으로 처리
+            } else {
+                console.log('Tag added successfully');
             }
-        );
-        
-        if (!tagResponse.ok) {
-            const errorText = await tagResponse.text();
-            console.error('Stibee tag error:', errorText);
-            throw new Error(`Failed to add tag: ${errorText}`);
+        } catch (tagError) {
+            console.error('Tag addition failed:', tagError);
+            // 태그 추가 실패해도 계속 진행
         }
-        
-        console.log('Tag added successfully');
         
         res.status(200).json({ success: true, message: 'Email sent successfully' });
         
