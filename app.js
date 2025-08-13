@@ -769,13 +769,13 @@ function App() {
             });
         });
         
-        // 70% 이상인 강점 역량 찾기
-        const strongSubcategories = [];
+        // 50% 초과인 역량들만 필터링
+        const strongCandidates = [];
         Object.keys(subcategoryData).forEach(subcat => {
             const data = subcategoryData[subcat];
             const percentage = (data.score / data.max) * 100;
-            if (percentage >= 70) {
-                strongSubcategories.push({
+            if (percentage > 50) {
+                strongCandidates.push({
                     name: subcat,
                     category: data.category,
                     percentage: percentage
@@ -783,9 +783,13 @@ function App() {
             }
         });
         
-        if (strongSubcategories.length === 0) {
+        if (strongCandidates.length === 0) {
             return null;
         }
+        
+        // 달성률 높은 순으로 정렬하여 상위 1-3개 선택
+        strongCandidates.sort((a, b) => b.percentage - a.percentage);
+        const strongSubcategories = strongCandidates.slice(0, Math.min(3, strongCandidates.length));
         
         // 카테고리별로 그룹핑
         const byCategory = {};
@@ -826,40 +830,28 @@ function App() {
             });
         });
         
-        // 달성률 계산 및 정렬
-        const subcategoryList = [];
+        // 50% 미만인 역량들만 필터링
+        const weakCandidates = [];
         Object.keys(subcategoryData).forEach(subcat => {
             const data = subcategoryData[subcat];
             const percentage = (data.score / data.max) * 100;
-            subcategoryList.push({
-                name: subcat,
-                category: data.category,
-                percentage: percentage
-            });
+            if (percentage <= 50) {  // 50% 이하인 경우
+                weakCandidates.push({
+                    name: subcat,
+                    category: data.category,
+                    percentage: percentage
+                });
+            }
         });
         
-        // 달성률이 낮은 순으로 정렬
-        subcategoryList.sort((a, b) => a.percentage - b.percentage);
-        
-        // 상위 3개 선택 (최대 5개까지 확장 가능)
-        let weakCount = 3;
-        if (subcategoryList.length > 3) {
-            // 3위와 4위의 차이가 5% 이내면 4위도 포함
-            if (subcategoryList[3] && subcategoryList[2].percentage + 5 >= subcategoryList[3].percentage) {
-                weakCount = 4;
-            }
-            // 4위와 5위의 차이가 5% 이내면 5위도 포함
-            if (weakCount === 4 && subcategoryList[4] && subcategoryList[3].percentage + 5 >= subcategoryList[4].percentage) {
-                weakCount = 5;
-            }
-        }
-        
-        const weakSubcategories = subcategoryList.slice(0, Math.min(weakCount, subcategoryList.length));
-        
-        // 모든 역량이 50% 이상인 경우
-        if (weakSubcategories.length === 0 || weakSubcategories[0].percentage >= 50) {
+        // 보완이 필요한 역량이 없는 경우
+        if (weakCandidates.length === 0) {
             return '모든 역량이 고루 준비되어 있습니다. 출마를 고려해보세요!';
         }
+        
+        // 달성률이 낮은 순으로 정렬하여 하위 1-3개 선택
+        weakCandidates.sort((a, b) => a.percentage - b.percentage);
+        const weakSubcategories = weakCandidates.slice(0, Math.min(3, weakCandidates.length));
         
         // 카테고리별로 그룹핑
         const byCategory = {};
@@ -879,6 +871,36 @@ function App() {
         return parts.join(', ') + ' 역량 보완이 필요해요.';
     };
     
+    // 3개 대분류 카테고리의 상대적 강점 분석
+    const getCategoryOverview = () => {
+        const selfScore = getCategoryScore('자기 역량');
+        const localScore = getCategoryScore('지역 활동');
+        const partyScore = getCategoryScore('정당 활동');
+        
+        // 각 카테고리의 달성률 계산
+        const categories = [
+            { name: '자기 역량', score: selfScore, max: 18, percentage: (selfScore / 18) * 100 },
+            { name: '지역 활동', score: localScore, max: 19, percentage: (localScore / 19) * 100 },
+            { name: '정당 활동', score: partyScore, max: 15, percentage: (partyScore / 15) * 100 }
+        ];
+        
+        // 달성률 높은 순으로 정렬
+        categories.sort((a, b) => b.percentage - a.percentage);
+        
+        // 총평 생성
+        let overview = `${categories[0].name}(${Math.round(categories[0].percentage)}%)이 가장 높은 준비도를 보이고 있습니다. `;
+        
+        // 상위 카테고리와 하위 카테고리의 차이가 20% 이상이면 언급
+        if (categories[0].percentage - categories[2].percentage > 20) {
+            overview += `${categories[2].name}(${Math.round(categories[2].percentage)}%)은 보완이 필요합니다.`;
+        } else if (categories[0].percentage - categories[2].percentage < 10) {
+            overview += `전체적으로 균형잡힌 역량을 보유하고 있습니다.`;
+        } else {
+            overview += `${categories[1].name}(${Math.round(categories[1].percentage)}%)과 ${categories[2].name}(${Math.round(categories[2].percentage)}%)도 꾸준히 준비해주세요.`;
+        }
+        
+        return overview;
+    };
 
     const renderResult = () => {
         const today = new Date().toLocaleDateString('ko-KR', { 
@@ -922,6 +944,11 @@ function App() {
                 </div>
 
                 <div className="personality-feedback">
+                    <div className="category-overview">
+                        <p className="overview-message">
+                            {getCategoryOverview()}
+                        </p>
+                    </div>
                     {getStrongSubcategories() && (
                         <p className="feedback-message strong-message">
                             {getStrongSubcategories()}
