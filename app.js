@@ -27,7 +27,7 @@ function App() {
 
     useEffect(() => {
         // 페이지 변경 시 화면 상단으로 스크롤 (지연 없이 즉시 실행)
-        if (currentScreen === 'quiz') {
+        if (currentScreen === 'start' || currentScreen === 'quiz') {
             // 모든 스크롤 즉시 리셋
             window.scrollTo(0, 0);
             document.body.scrollTop = 0;
@@ -51,6 +51,13 @@ function App() {
             }
         }
     }, [currentScreen, currentBaseQuestion]);
+    
+    // 컴포넌트 마운트 시 스크롤 초기화
+    useEffect(() => {
+        window.scrollTo(0, 0);
+        document.body.scrollTop = 0;
+        document.documentElement.scrollTop = 0;
+    }, []);
     
     const handleStart = () => {
         // 유효성 검사
@@ -1071,7 +1078,7 @@ function App() {
                 </div>
 
                 <div className="bootcamp-section">
-                    <p className="bootcamp-subtitle">정치인 역량은 계속 만들어가야 해요</p>
+                    <h3 className="bootcamp-title">🎯 정치인 역량은 계속 만들어가야 해요</h3>
                     <p className="bootcamp-description">
                         내 역량을 기반으로 고유한 자기경쟁력을 어떻게 만드는지 궁금하다면?<br/>
                         부트캠프에서 학습을 이어가 보세요.
@@ -1085,8 +1092,29 @@ function App() {
                     <h3 className="share-title">테스트가 유용했다면? 친구에게 공유해 보세요</h3>
                     <button className="share-link-btn" onClick={() => {
                         const text = 'https://newways.kr/ready-to-test';
-                        navigator.clipboard.writeText(text);
-                        alert('링크가 복사되었습니다!');
+                        if (navigator.clipboard && navigator.clipboard.writeText) {
+                            navigator.clipboard.writeText(text).then(() => {
+                                alert('링크가 복사되었습니다!');
+                            }).catch(() => {
+                                // fallback for clipboard API failure
+                                const tempInput = document.createElement('input');
+                                tempInput.value = text;
+                                document.body.appendChild(tempInput);
+                                tempInput.select();
+                                document.execCommand('copy');
+                                document.body.removeChild(tempInput);
+                                alert('링크가 복사되었습니다!');
+                            });
+                        } else {
+                            // fallback for browsers without clipboard API
+                            const tempInput = document.createElement('input');
+                            tempInput.value = text;
+                            document.body.appendChild(tempInput);
+                            tempInput.select();
+                            document.execCommand('copy');
+                            document.body.removeChild(tempInput);
+                            alert('링크가 복사되었습니다!');
+                        }
                     }}>
                         🔗 진단 테스트 공유하기
                     </button>
