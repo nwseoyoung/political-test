@@ -85,6 +85,14 @@ function App() {
         // 구글 스프레드시트로 데이터 전송
         sendToGoogleSheets(userDataWithConsent);
         
+        // 테스트 시작 추적
+        trackTest({
+            user_name: userInfo.name,
+            marketing_agree: marketingAgree,
+            test_completed: false,
+            candidate_intention: userInfo.candidateIntention
+        });
+        
         setCurrentScreen('quiz');
         
         // 퀴즈 시작 시 스크롤 상단으로 초기화
@@ -93,6 +101,30 @@ function App() {
             document.body.scrollTop = 0;
             document.documentElement.scrollTop = 0;
         }, 0);
+    };
+    
+    const trackTest = (trackingData) => {
+        // 통계 추적 API 호출
+        const isProduction = window.location.hostname.includes('vercel.app') || 
+                           window.location.hostname.includes('newways.kr') ||
+                           window.location.hostname === 'political-test-three.vercel.app';
+        
+        if (isProduction) {
+            fetch('/api/track-test', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(trackingData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Test tracked:', data);
+            })
+            .catch(error => {
+                console.error('Tracking error:', error);
+            });
+        }
     };
     
     const sendToGoogleSheets = (userData) => {
@@ -254,6 +286,18 @@ function App() {
             partyScore
         };
         localStorage.setItem('politicalTestResult', JSON.stringify(resultData));
+        
+        // 테스트 완료 추적
+        const savedUserInfo = localStorage.getItem('testUserInfo');
+        if (savedUserInfo) {
+            const user = JSON.parse(savedUserInfo);
+            trackTest({
+                user_name: user.name,
+                marketing_agree: user.marketingAgree,
+                test_completed: true,
+                candidate_intention: user.candidateIntention
+            });
+        }
         
         // 이메일 전송 (EmailJS 설정이 있는 경우)
         sendResultEmail(totalScore, selfScore, localScore, partyScore);

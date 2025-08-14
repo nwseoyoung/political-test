@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>정치 역량 테스트 - 관리자 통계</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: #1a1a1a;
+            color: #DAE000;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .login-form {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        .login-form input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+        
+        .login-form button {
+            width: 100%;
+            padding: 12px;
+            background: #1a1a1a;
+            color: #DAE000;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .login-form button:hover {
+            background: #333;
+        }
+        
+        .stats-container {
+            display: none;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .stat-card h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .intention-list {
+            list-style: none;
+            margin-top: 15px;
+        }
+        
+        .intention-list li {
+            padding: 10px;
+            background: #f8f9fa;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .intention-list strong {
+            color: #1a1a1a;
+        }
+        
+        .error {
+            color: #e74c3c;
+            text-align: center;
+            padding: 10px;
+            margin-top: 10px;
+        }
+        
+        .last-updated {
+            text-align: center;
+            color: #666;
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>정치 역량 테스트 - 관리자 통계</h1>
+            <p>테스트 이용 현황을 확인합니다</p>
+        </div>
+        
+        <div id="loginForm" class="login-form">
+            <h2>관리자 인증</h2>
+            <p style="margin-bottom: 20px; color: #666;">통계를 확인하려면 관리자 키를 입력하세요</p>
+            <input type="password" id="adminKey" placeholder="관리자 키 입력" onkeypress="if(event.key==='Enter') checkAuth()">
+            <button onclick="checkAuth()">확인</button>
+            <div id="errorMsg" class="error"></div>
+        </div>
+        
+        <div id="statsContainer" class="stats-container">
+            <div class="stat-card">
+                <h3>📊 전체 테스트 이용자</h3>
+                <div class="stat-number" id="totalTests">0</div>
+                <div class="stat-label">명이 테스트를 시작했습니다</div>
+            </div>
+            
+            <div class="stat-card">
+                <h3>✅ 테스트 완료</h3>
+                <div class="stat-number" id="completedTests">0</div>
+                <div class="stat-label">명이 테스트를 완료했습니다</div>
+            </div>
+            
+            <div class="stat-card">
+                <h3>📧 마케팅 수신 동의</h3>
+                <div class="stat-number" id="marketingAgreed">0</div>
+                <div class="stat-label">명이 이메일 수신에 동의했습니다</div>
+            </div>
+            
+            <div class="stat-card" style="grid-column: span 2;">
+                <h3>🎯 출마 의향 분포</h3>
+                <ul class="intention-list" id="intentionList">
+                    <li>데이터를 불러오는 중...</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div id="lastUpdated" class="last-updated" style="display: none;"></div>
+    </div>
+    
+    <script>
+        async function checkAuth() {
+            const key = document.getElementById('adminKey').value;
+            const errorMsg = document.getElementById('errorMsg');
+            
+            if (!key) {
+                errorMsg.textContent = '관리자 키를 입력해주세요';
+                return;
+            }
+            
+            try {
+                // API URL 설정 (로컬 또는 배포 환경)
+                const apiUrl = window.location.hostname === 'localhost' 
+                    ? 'http://localhost:3000/api/get-stats' 
+                    : 'https://political-test-three.vercel.app/api/get-stats';
+                
+                const response = await fetch(`${apiUrl}?key=${key}`);
+                
+                if (response.status === 401) {
+                    errorMsg.textContent = '잘못된 관리자 키입니다';
+                    return;
+                }
+                
+                if (!response.ok) {
+                    throw new Error('서버 오류가 발생했습니다');
+                }
+                
+                const data = await response.json();
+                displayStats(data);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                errorMsg.textContent = '통계를 불러오는데 실패했습니다';
+            }
+        }
+        
+        function displayStats(data) {
+            // 로그인 폼 숨기기
+            document.getElementById('loginForm').style.display = 'none';
+            
+            // 통계 표시
+            document.getElementById('statsContainer').style.display = 'grid';
+            document.getElementById('totalTests').textContent = data.total_tests || 0;
+            document.getElementById('completedTests').textContent = data.completed_tests || 0;
+            document.getElementById('marketingAgreed').textContent = data.marketing_agreed || 0;
+            
+            // 출마 의향 분포
+            const intentionList = document.getElementById('intentionList');
+            intentionList.innerHTML = '';
+            
+            if (data.candidate_intentions) {
+                Object.entries(data.candidate_intentions).forEach(([key, value]) => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <span>${key}</span>
+                        <strong>${value}명</strong>
+                    `;
+                    intentionList.appendChild(li);
+                });
+            }
+            
+            // 마지막 업데이트 시간
+            const lastUpdated = document.getElementById('lastUpdated');
+            lastUpdated.style.display = 'block';
+            lastUpdated.textContent = `마지막 업데이트: ${new Date(data.last_updated).toLocaleString('ko-KR')}`;
+            
+            // 메시지가 있으면 표시
+            if (data.message) {
+                const messageDiv = document.createElement('div');
+                messageDiv.style.cssText = 'background: #fff3cd; padding: 15px; border-radius: 8px; margin-top: 20px; text-align: center; color: #856404;';
+                messageDiv.textContent = data.message;
+                document.querySelector('.container').appendChild(messageDiv);
+            }
+        }
+        
+        // Enter 키로 로그인
+        document.getElementById('adminKey').focus();
+    </script>
+</body>
+</html>
