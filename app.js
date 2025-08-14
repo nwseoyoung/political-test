@@ -264,6 +264,13 @@ function App() {
         if (!savedUserInfo) return;
         
         const user = JSON.parse(savedUserInfo);
+        
+        // 마케팅 수신 동의하지 않은 경우 이메일 발송하지 않음
+        if (!user.marketingAgree) {
+            console.log('마케팅 수신 미동의로 이메일 발송 생략');
+            return;
+        }
+        
         const weaknessMessage = getWeakSubcategories();
         const strengthMessage = getStrongSubcategories();
         
