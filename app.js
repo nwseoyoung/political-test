@@ -88,6 +88,8 @@ function App() {
         // 테스트 시작 추적
         trackTest({
             user_name: userInfo.name,
+            user_email: userInfo.email,
+            user_phone: userInfo.phone,
             marketing_agree: marketingAgree,
             test_completed: false,
             candidate_intention: userInfo.candidateIntention
@@ -136,7 +138,7 @@ function App() {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'text/plain',
                 },
                 body: JSON.stringify({
                     timestamp: new Date().toISOString(),
@@ -293,9 +295,15 @@ function App() {
             const user = JSON.parse(savedUserInfo);
             trackTest({
                 user_name: user.name,
+                user_email: user.email,
+                user_phone: user.phone,
                 marketing_agree: user.marketingAgree,
                 test_completed: true,
-                candidate_intention: user.candidateIntention
+                candidate_intention: user.candidateIntention,
+                total_score: totalScore,
+                self_score: selfScore,
+                local_score: localScore,
+                party_score: partyScore
             });
         }
         
@@ -739,7 +747,7 @@ function App() {
                             </label>
                         </div>
                         <p className="privacy-notice">
-                            마케팅 수신 동의를 해야 이메일로 진단 결과와 자기경쟁력 워크시트를 보내드려요.
+                            마케팅 수신 동의를 해야 이메일로 상세한 진단 결과를 보내드려요.
                         </p>
                     </div>
                 </div>
@@ -1063,10 +1071,10 @@ function App() {
                 </div>
 
                 <div className="bootcamp-section">
-                    <h3 className="bootcamp-title">🎯 정치인 준비 실전 전략 더 알고 싶다면?</h3>
+                    <p className="bootcamp-subtitle">정치인 역량은 계속 만들어가야 해요</p>
                     <p className="bootcamp-description">
-                        뉴웨이즈 부트캠프에서는 정치 기초 지식부터 출마 실전 전략까지<br/>
-                        하루만에 배울 수 있어요.
+                        내 역량을 기반으로 고유한 자기경쟁력을 어떻게 만드는지 궁금하다면?<br/>
+                        부트캠프에서 학습을 이어가 보세요.
                     </p>
                     <button className="cta-btn bootcamp-cta" onClick={() => window.open('https://newways.kr/1daybootcamp?utm_source=homepage&utm_medium=landing&utm_campaign=1daycamp_selfcheck&utm_content=250813', '_blank')}>
                         부트캠프 신청하기
@@ -1074,6 +1082,7 @@ function App() {
                 </div>
 
                 <div className="share-link-section">
+                    <h3 className="share-title">테스트가 유용했다면? 친구에게 공유해 보세요</h3>
                     <button className="share-link-btn" onClick={() => {
                         const text = 'https://newways.kr/ready-to-test';
                         navigator.clipboard.writeText(text);

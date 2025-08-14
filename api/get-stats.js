@@ -28,10 +28,11 @@ export default async function handler(req, res) {
         return res.status(401).json({ error: 'Unauthorized' });
     }
 
+    // Google Apps Script URL (환경변수로 설정)
+    const GOOGLE_SCRIPT_URL = process.env.GOOGLE_SCRIPT_URL;
+    
     try {
-        // 실제로는 데이터베이스나 Google Sheets에서 데이터를 가져와야 함
-        // 임시로 하드코딩된 데이터 반환
-        const stats = {
+        let stats = {
             total_tests: 0,
             completed_tests: 0,
             marketing_agreed: 0,
@@ -41,9 +42,31 @@ export default async function handler(req, res) {
                 "출마를 고민하거나 계획하고 있다": 0,
                 "출마를 고려하지 않는다": 0
             },
-            last_updated: new Date().toISOString(),
-            message: "실제 통계는 Google Sheets 또는 데이터베이스 연동 후 확인 가능합니다."
+            last_updated: new Date().toISOString()
         };
+
+        // Google Sheets에서 데이터 가져오기
+        if (GOOGLE_SCRIPT_URL) {
+            try {
+                const response = await fetch(`${GOOGLE_SCRIPT_URL}?key=${ADMIN_KEY}`);
+                if (response.ok) {
+                    const sheetsData = await response.json();
+                    // Google Sheets 데이터로 업데이트
+                    stats = {
+                        ...sheetsData,
+                        last_updated: sheetsData.last_updated || new Date().toISOString()
+                    };
+                } else {
+                    console.error('Google Sheets fetch failed:', response.status);
+                    stats.message = "Google Sheets 연동 오류. 임시 데이터를 표시합니다.";
+                }
+            } catch (fetchError) {
+                console.error('Google Sheets fetch error:', fetchError);
+                stats.message = "Google Sheets 연결 실패. 환경변수를 확인해주세요.";
+            }
+        } else {
+            stats.message = "Google Sheets URL이 설정되지 않았습니다. Vercel 환경변수를 확인해주세요.";
+        }
 
         res.status(200).json(stats);
         

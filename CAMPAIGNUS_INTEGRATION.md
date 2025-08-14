@@ -1,43 +1,23 @@
 # 캠페이너스 페이지 통합 가이드
 
-## 빠른 시작
+## 빠른 시작 (최신 버전)
 
 캠페이너스 HTML 블록에 아래 코드를 복사하여 붙여넣으세요:
 
 ```html
-<div id="political-test-widget" style="width: 100%; max-width: 700px; margin: 0 auto; position: relative; overflow: hidden;">
-    <iframe 
-        src="https://political-test-three.vercel.app/" 
-        style="width: 100%; height: 100vh; min-height: 800px; border: none; border-radius: 12px; overflow: auto; -webkit-overflow-scrolling: touch;"
-        title="정치 역량 진단 테스트"
-        loading="lazy"
-        scrolling="yes"
-        allowfullscreen>
-    </iframe>
-</div>
-
-<script>
-// iframe 높이 자동 조절 및 스크롤 최적화
-(function() {
-    var iframe = document.querySelector('#political-test-widget iframe');
-    if (iframe) {
-        // 뷰포트 높이에 맞춤
-        function adjustHeight() {
-            var viewportHeight = window.innerHeight || document.documentElement.clientHeight;
-            iframe.style.height = Math.max(viewportHeight, 800) + 'px';
-        }
-        
-        adjustHeight();
-        window.addEventListener('resize', adjustHeight);
-        
-        // iframe 로드 시 상단으로 스크롤
-        iframe.onload = function() {
-            window.scrollTo(0, 0);
-        };
-    }
-})();
-</script>
+<iframe 
+    src="https://political-test-three.vercel.app/campaignus-embed.html" 
+    width="100%" 
+    height="600" 
+    frameborder="0"
+    style="max-width: 100%; border: none;">
+</iframe>
 ```
+
+### 특징
+- **한 화면에 모든 요소 표시**: 질문, 선택지, 버튼이 스크롤 없이 보임
+- **최적화된 레이아웃**: iframe 전용 스타일로 공간 효율성 극대화
+- **자동 배포**: Git push 시 자동 업데이트 (코드 재삽입 불필요)
 
 ## 통합 옵션
 
@@ -113,7 +93,7 @@
 - **3개 카테고리**: 자기 역량, 지역 활동, 정당 활동
 - **실시간 진행률**: 진행 상황 표시
 - **상세 결과 분석**: 영역별 점수 및 해설
-- **강점/약점 분석**: 70% 이상 달성한 강점과 개선이 필요한 영역 표시
+- **강점/약점 분석**: 50% 이상 달성한 강점과 개선이 필요한 영역 표시
 - **모바일 최적화**: 반응형 디자인
 
 ## 문제 해결
